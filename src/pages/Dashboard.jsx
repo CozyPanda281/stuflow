@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import db, { getOrCreateDaySchedule, getActiveLeave } from '../db/database';
+import { WarningIcon } from '../components/Icons';
+
+const iw = { width: 18, height: 18, stroke: 'currentColor', flexShrink: 0 };
 
 export default function Dashboard() {
   const [todaySchedule, setTodaySchedule] = useState(null);
@@ -55,7 +58,7 @@ export default function Dashboard() {
 
       {activeLeave && (
         <div className="leave-banner">
-          <span>&#9888;</span>
+          <WarningIcon style={iw} />
           <span>On leave: {activeLeave.reason} (until {activeLeave.endDate})</span>
           <button className="btn btn-sm btn-warning" style={{marginLeft:'auto'}} onClick={() => navigate('/leave')}>
             Manage

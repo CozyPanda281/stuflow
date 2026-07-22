@@ -4,6 +4,9 @@ import { format } from 'date-fns';
 import { getOrCreateDaySchedule } from '../db/database';
 import db from '../db/database';
 import { useToast } from '../App';
+import { PlusIcon } from '../components/Icons';
+
+const ip = { width: 14, height: 14, stroke: 'currentColor', strokeWidth: 2.5 };
 
 export default function LiveDayEditor() {
   const [schedule, setSchedule] = useState(null);
@@ -130,7 +133,7 @@ export default function LiveDayEditor() {
         </div>
         <div className="inline-flex">
           <button className="btn btn-sm btn-warning" onClick={handleResetDay}>Reset to Planned</button>
-          <button className="btn btn-sm btn-primary" onClick={handleAddExtra}>&#43; Add Extra Period</button>
+          <button className="btn btn-sm btn-primary" onClick={handleAddExtra}><PlusIcon style={ip} /> Add Extra Period</button>
           <button className="btn btn-sm" onClick={() => navigate('/today')}>Done</button>
         </div>
       </div>

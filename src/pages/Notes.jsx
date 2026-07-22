@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import db from '../db/database';
 import { format } from 'date-fns';
 import { useToast } from '../App';
+import { MemoIcon } from '../components/Icons';
 
 export default function Notes() {
   const [notes, setNotes] = useState([]);
@@ -74,7 +75,7 @@ export default function Notes() {
       {filtered.length === 0 ? (
         <div className="card">
           <div className="empty-state">
-            <div className="icon">&#128221;</div>
+            <MemoIcon style={{ width: 48, height: 48, stroke: 'var(--text-muted)', strokeWidth: 1.5 }} />
             <p>{search ? 'No matching notes' : 'No notes yet'}</p>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import db from '../db/database';
 import { format, parseISO } from 'date-fns';
 import { useToast } from '../App';
+import { CheckSquareIcon } from '../components/Icons';
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -87,7 +88,7 @@ export default function Tasks() {
       {filtered.length === 0 ? (
         <div className="card">
           <div className="empty-state">
-            <div className="icon">&#9744;</div>
+            <CheckSquareIcon style={{ width: 48, height: 48, stroke: 'var(--text-muted)', strokeWidth: 1.5 }} />
             <p>No tasks found</p>
           </div>
         </div>
@@ -108,8 +109,9 @@ export default function Tasks() {
                   {task.description && <div style={{fontSize:12, color:'var(--text-secondary)', marginTop:2}}>{task.description}</div>}
                   <div style={{display:'flex', gap:8, marginTop:4, fontSize:11}}>
                     {task.priority && (
-                      <span style={{color: priorityColors[task.priority]}}>
-                        &#9679; {task.priority}
+                      <span style={{display:'inline-flex', alignItems:'center', gap:4, color: priorityColors[task.priority]}}>
+                        <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg>
+                        {task.priority}
                       </span>
                     )}
                     {task.dueDate && (

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
 import db, { getOrCreateDaySchedule } from '../db/database';
 import { useToast } from '../App';
+import { ClipboardIcon } from '../components/Icons';
 
 export default function Attendance() {
   const [records, setRecords] = useState([]);
@@ -143,7 +144,7 @@ export default function Attendance() {
         </div>
         {records.length === 0 ? (
           <div className="empty-state">
-            <div className="icon">&#128203;</div>
+            <ClipboardIcon style={{ width: 48, height: 48, stroke: 'var(--text-muted)', strokeWidth: 1.5 }} />
             <p>No attendance records yet</p>
           </div>
         ) : (

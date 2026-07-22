@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
 import db, { getActiveLeave } from '../db/database';
 import { useToast } from '../App';
+import { WarningIcon, CalendarIcon } from '../components/Icons';
+
+const iw = { width: 18, height: 18, stroke: 'currentColor', flexShrink: 0 };
 
 export default function Leave() {
   const [leaves, setLeaves] = useState([]);
@@ -99,7 +102,7 @@ export default function Leave() {
 
       {isCurrentlyOnLeave && (
         <div className="leave-banner">
-          <span>&#9888;</span>
+          <WarningIcon style={iw} />
           <span>You are currently on leave: {activeLeave.reason}</span>
           <button className="btn btn-sm" style={{marginLeft:'auto'}} onClick={() => handleEndEarly(activeLeave)}>
             End Early
@@ -110,7 +113,7 @@ export default function Leave() {
       {leaves.length === 0 ? (
         <div className="card">
           <div className="empty-state">
-            <div className="icon">&#128197;</div>
+            <CalendarIcon style={{ width: 48, height: 48, stroke: 'var(--text-muted)', strokeWidth: 1.5 }} />
             <p>No leaves recorded</p>
           </div>
         </div>

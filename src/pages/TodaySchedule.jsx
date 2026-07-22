@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { getOrCreateDaySchedule, getActiveLeave } from '../db/database';
 import { useToast } from '../App';
+import { WarningIcon, MoonIcon } from '../components/Icons';
+
+const iw = { width: 16, height: 16, stroke: 'currentColor', flexShrink: 0 };
 
 export default function TodaySchedule() {
   const [schedule, setSchedule] = useState(null);
@@ -44,13 +47,13 @@ export default function TodaySchedule() {
 
       {activeLeave && (
         <div className="leave-banner">
-          <span>&#9888;</span> On leave: {activeLeave.reason}
+          <WarningIcon style={iw} /> On leave: {activeLeave.reason}
         </div>
       )}
 
       {!hasClasses && (
         <div className="card" style={{textAlign:'center', padding:40}}>
-          <div style={{fontSize:32, marginBottom:8}}>&#127769;</div>
+          <MoonIcon style={{ width: 48, height: 48, stroke: 'var(--text-muted)', strokeWidth: 1.5, marginBottom: 8 }} />
           <div style={{fontSize:16, fontWeight:600}}>No classes today</div>
           <div style={{fontSize:13, color:'var(--text-secondary)', marginTop:4}}>
             Enjoy your day off!
@@ -79,7 +82,7 @@ export default function TodaySchedule() {
             }}>
               <div className="period-time">
                 Period {period.period}: {period.startTime} - {period.endTime}
-                {isModified && <span style={{color:'var(--orange)', marginLeft:8}}>&#9888; Modified</span>}
+                {isModified && <span style={{color:'var(--orange)', marginLeft:8, display:'inline-flex', alignItems:'center', gap:4}}><WarningIcon style={{width:14,height:14,stroke:'currentColor'}} /> Modified</span>}
                 {period.status === 'cancelled' && <span className="status-badge status-cancelled" style={{marginLeft:8}}>Cancelled</span>}
                 {period.status === 'self-study' && <span className="status-badge status-late" style={{marginLeft:8}}>Self Study</span>}
               </div>

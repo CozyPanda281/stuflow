@@ -62,6 +62,11 @@ export default function Calendar() {
     return null;
   }
 
+  function hasModifications(dateStr) {
+    const schedule = schedules[dateStr];
+    return schedule?.modifications?.length > 0;
+  }
+
   function openAttendance(period) {
     const existing = (attendanceMap[dayData.date] || []).find(a => a.period === period.period);
     setAttModal({ period, existing });
@@ -132,9 +137,18 @@ export default function Calendar() {
                   color: color || (selected ? 'white' : 'var(--text-primary)'),
                   border: '1px solid transparent',
                   borderColor: color ? `${color}44` : 'transparent',
-                  transition: 'all 0.1s'
+                  transition: 'all 0.1s',
+                  position:'relative'
                 }}>
                 {format(day, 'd')}
+                {hasModifications(dateStr) && (
+                  <span style={{
+                    position:'absolute', bottom:2, right:'50%',
+                    transform:'translateX(50%)',
+                    width:4, height:4, borderRadius:'50%',
+                    background:'var(--orange)'
+                  }} />
+                )}
               </div>
             );
           })}
@@ -194,6 +208,25 @@ export default function Calendar() {
                 <div key={r.id} style={{display:'flex', justifyContent:'space-between', padding:'4px 0', fontSize:13}}>
                   <span>{r.subject}</span>
                   <span className={`status-badge status-${r.status}`}>{r.status}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {dayData.schedule?.modifications?.length > 0 && (
+            <div style={{marginTop:12, paddingTop:12, borderTop:'1px solid var(--border)'}}>
+              <div style={{fontSize:13, fontWeight:600, marginBottom:8, color:'var(--orange)'}}>
+                Schedule Changes ({dayData.schedule.modifications.length})
+              </div>
+              {dayData.schedule.modifications.map((mod, i) => (
+                <div key={i} style={{
+                  display:'flex', gap:8, padding:'5px 0', fontSize:12,
+                  borderBottom: i < dayData.schedule.modifications.length - 1 ? '1px solid var(--border)' : 'none'
+                }}>
+                  <span style={{color:'var(--text-muted)', whiteSpace:'nowrap', minWidth:60, fontSize:11}}>
+                    {format(parseISO(mod.timestamp), 'HH:mm')}
+                  </span>
+                  <span style={{color:'var(--text-secondary)'}}>{mod.action}</span>
                 </div>
               ))}
             </div>

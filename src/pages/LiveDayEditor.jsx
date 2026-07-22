@@ -26,9 +26,9 @@ export default function LiveDayEditor() {
     setLoading(false);
   }
 
-  async function saveActual(updatedActual) {
+  async function saveActual(updatedActual, details) {
     if (!schedule) return;
-    const newMod = { action: 'edit', timestamp: new Date().toISOString() };
+    const newMod = { action: details || 'edit', timestamp: new Date().toISOString() };
     const modifications = [...(schedule.modifications || []), newMod];
     await db.daySchedules.update(schedule.id, { actual: updatedActual, modifications, isFinalized: false });
     const s = await getOrCreateDaySchedule(today);
@@ -42,21 +42,26 @@ export default function LiveDayEditor() {
 
   async function handleSaveEdit() {
     if (!editModal || !schedule) return;
+    const prev = schedule.actual.find(p => p.period === editModal.period);
+    const details = `Edited Period ${editModal.period}: ${prev?.subject || 'Empty'} → ${editModal.subject || 'Empty'}${editModal.startTime !== prev?.startTime ? ` (time: ${editModal.startTime}-${editModal.endTime})` : ''}`;
     const updatedActual = schedule.actual.map(p =>
       p.period === editModal.period ? editModal : p
     );
-    await saveActual(updatedActual);
+    await saveActual(updatedActual, details);
     setEditModal(null);
   }
 
   async function handleCancel(period) {
     if (!schedule) return;
+    const target = schedule.actual.find(p => p.period === period);
+    const isCancelling = target?.status !== 'cancelled';
     const updatedActual = schedule.actual.map(p =>
       p.period === period
-        ? { ...p, status: p.status === 'cancelled' ? 'scheduled' : 'cancelled' }
+        ? { ...p, status: isCancelling ? 'cancelled' : 'scheduled' }
         : p
     );
-    await saveActual(updatedActual);
+    const details = isCancelling ? `Cancelled Period ${period}: ${target?.subject}` : `Restored Period ${period}: ${target?.subject}`;
+    await saveActual(updatedActual, details);
   }
 
   async function handleSwapClick(period) {
@@ -73,8 +78,11 @@ export default function LiveDayEditor() {
     const idx1 = updatedActual.findIndex(p => p.period === swapMode);
     const idx2 = updatedActual.findIndex(p => p.period === period);
     if (idx1 === -1 || idx2 === -1) { setSwapMode(null); return; }
+    const p1 = updatedActual[idx1];
+    const p2 = updatedActual[idx2];
     [updatedActual[idx1], updatedActual[idx2]] = [updatedActual[idx2], updatedActual[idx1]];
-    await saveActual(updatedActual);
+    const details = `Swapped Period ${swapMode} (${p1?.subject}) with Period ${period} (${p2?.subject})`;
+    await saveActual(updatedActual, details);
     setSwapMode(null);
     showToast('Periods swapped', 'success');
   }
@@ -86,13 +94,15 @@ export default function LiveDayEditor() {
       showToast('No next period to extend into', 'error');
       return;
     }
+    const current = schedule.actual[idx];
     const nextPeriod = schedule.actual[idx + 1];
     const updatedActual = schedule.actual.map((p, i) => {
       if (i === idx) return { ...p, endTime: nextPeriod.endTime };
       if (i === idx + 1) return { ...p, status: 'cancelled', subject: '' };
       return p;
     });
-    await saveActual(updatedActual);
+    const details = `Extended Period ${period} (${current?.subject}) to ${nextPeriod.endTime}, cancelled Period ${nextPeriod.period} (${nextPeriod?.subject})`;
+    await saveActual(updatedActual, details);
     showToast('Class extended', 'success');
   }
 
@@ -115,7 +125,8 @@ export default function LiveDayEditor() {
       if (i === idx + 1) return { ...p, status: 'cancelled', subject: '' };
       return p;
     });
-    await saveActual(updatedActual);
+    const details = `Merged Period ${period} (${current.subject}) with Period ${next.period} (${next.subject}) → ${mergedName}`;
+    await saveActual(updatedActual, details);
     showToast('Classes merged', 'success');
   }
 
@@ -133,7 +144,8 @@ export default function LiveDayEditor() {
       status: 'scheduled'
     };
     const updatedActual = [...schedule.actual, newPeriod];
-    await saveActual(updatedActual);
+    const details = `Added extra period ${newPeriod.period} (${newPeriod.startTime}-${newPeriod.endTime})`;
+    await saveActual(updatedActual, details);
     showToast('Extra period added', 'success');
   }
 
@@ -145,9 +157,10 @@ export default function LiveDayEditor() {
   async function handleResetDay() {
     if (!schedule) return;
     const s = await getOrCreateDaySchedule(today);
+    const resetMod = { action: 'Reset to planned schedule (cleared all changes)', timestamp: new Date().toISOString() };
     await db.daySchedules.update(schedule.id, {
       actual: JSON.parse(JSON.stringify(s.planned)),
-      modifications: [],
+      modifications: [resetMod],
       isFinalized: false, finalizedAt: null, isHoliday: false
     });
     const updated = await getOrCreateDaySchedule(today);

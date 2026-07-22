@@ -32,9 +32,28 @@ export default function MasterTimetable() {
     setLoading(false);
   }
 
+  function getFacultyForSubject(subject) {
+    const counts = {};
+    for (const d of DAYS) {
+      for (const p of (timetableData[d] || [])) {
+        if (p.subject.toLowerCase() === subject.toLowerCase() && p.faculty) {
+          counts[p.faculty] = (counts[p.faculty] || 0) + 1;
+        }
+      }
+    }
+    const entries = Object.entries(counts);
+    return entries.length ? entries.sort((a, b) => b[1] - a[1])[0][0] : '';
+  }
+
   function updatePeriod(day, idx, field, value) {
     const updated = { ...timetableData };
     updated[day] = updated[day].map((p, i) => i === idx ? { ...p, [field]: value } : p);
+    if (field === 'subject' && value) {
+      const faculty = getFacultyForSubject(value);
+      if (faculty && !updated[day][idx].faculty) {
+        updated[day][idx] = { ...updated[day][idx], faculty };
+      }
+    }
     setTimetableData(updated);
   }
 

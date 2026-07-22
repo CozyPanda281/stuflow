@@ -27,7 +27,7 @@ export default function Layout() {
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <h1>Aditya</h1>
-          <p>Academic Companion</p>
+          <p>Your Academic Companion</p>
         </div>
         <nav className="sidebar-nav">
           {navItems.map(item => (

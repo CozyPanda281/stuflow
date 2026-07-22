@@ -11,7 +11,8 @@ import Notes from './pages/Notes';
 import Calendar from './pages/Calendar';
 import Analytics from './pages/Analytics';
 import Leave from './pages/Leave';
-import db, { getActiveLeave } from './db/database';
+import More from './pages/More';
+import { getActiveLeave } from './db/database';
 import { startNotificationService, stopNotificationService } from './utils/notifications';
 
 export const ToastContext = createContext();
@@ -63,6 +64,7 @@ export default function App() {
           <Route path="calendar" element={<Calendar />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="leave" element={<Leave />} />
+          <Route path="more" element={<More />} />
         </Route>
       </Routes>
       <ToastContainer toasts={toasts} />

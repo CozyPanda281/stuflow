@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TimetableIcon, NotesIcon, CalendarIcon, LeaveIcon, AnalyticsIcon, SettingsIcon, EditIcon } from '../components/Icons';
+import { APP_VERSION } from '../App';
 
 const items = [
   { to: '/timetable', label: 'Timetable', icon: TimetableIcon, desc: 'Manage your weekly schedule' },
@@ -48,6 +49,9 @@ export default function More() {
             </div>
           );
         })}
+      </div>
+      <div style={{textAlign:'center', fontSize:11, color:'var(--text-muted)', padding:'20px 0 8px'}}>
+        Aditya v{APP_VERSION}
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
-import { format } from 'date-fns';
+import { format, parseISO, isToday, isTomorrow, differenceInDays, isPast, startOfDay } from 'date-fns';
 import db, { getOrCreateDaySchedule, getActiveLeave } from '../db/database';
 
 let notificationInterval = null;
 let lastNotified = {};
+let lastTaskNotified = {};
 
 export async function requestPermission() {
   if (!('Notification' in window)) return false;
@@ -17,8 +18,7 @@ export function showNotification(title, body) {
   if (Notification.permission !== 'granted') return;
   try {
     new Notification(title, { body, icon: '/icon-192.png' });
-  } catch (e) {
-  }
+  } catch (e) {}
 }
 
 export async function checkUpcomingClasses() {
@@ -35,7 +35,7 @@ export async function checkUpcomingClasses() {
 
     for (const period of schedule.actual) {
       if (!period.subject || period.status === 'cancelled') continue;
-      if (lastNotified[period.period]) continue;
+      if (lastNotified[`class_${period.period}`]) continue;
 
       const [h, m] = period.startTime.split(':').map(Number);
       const classTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
@@ -47,18 +47,53 @@ export async function checkUpcomingClasses() {
           `${period.subject} in ${diffMin} min`,
           `${period.faculty} · Room ${period.classroom} · Period ${period.period}`
         );
-        lastNotified[period.period] = true;
+        lastNotified[`class_${period.period}`] = true;
       }
     }
-  } catch (e) {
-  }
+  } catch (e) {}
+}
+
+export async function checkUpcomingTasks() {
+  try {
+    const leave = await getActiveLeave();
+    if (leave) return;
+
+    const tasks = await db.tasks.where('completed').equals(0).toArray();
+    const now = new Date();
+    const todayStart = startOfDay(now);
+
+    for (const task of tasks) {
+      if (lastTaskNotified[task.id]) continue;
+      if (!task.dueDate) continue;
+
+      try {
+        const dueDate = parseISO(task.dueDate);
+        const daysUntilDue = differenceInDays(dueDate, todayStart);
+
+        if (daysUntilDue < 0) {
+          showNotification('Overdue: ' + task.title, 'Was due ' + format(dueDate, 'MMM d'));
+          lastTaskNotified[task.id] = true;
+        } else if (daysUntilDue === 0) {
+          showNotification('Due Today: ' + task.title, task.priority ? `Priority: ${task.priority}` : '');
+          lastTaskNotified[task.id] = true;
+        } else if (daysUntilDue === 1) {
+          showNotification('Due Tomorrow: ' + task.title, task.priority ? `Priority: ${task.priority}` : '');
+          lastTaskNotified[task.id] = true;
+        }
+      } catch (e) {}
+    }
+  } catch (e) {}
 }
 
 export function startNotificationService() {
   requestPermission();
   if (notificationInterval) clearInterval(notificationInterval);
-  notificationInterval = setInterval(checkUpcomingClasses, 30000);
+  notificationInterval = setInterval(() => {
+    checkUpcomingClasses();
+    checkUpcomingTasks();
+  }, 30000);
   checkUpcomingClasses();
+  checkUpcomingTasks();
 }
 
 export function stopNotificationService() {

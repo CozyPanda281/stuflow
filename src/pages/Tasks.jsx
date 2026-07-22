@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import db from '../db/database';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, differenceInDays, startOfDay } from 'date-fns';
 import { useToast } from '../App';
 import { CheckSquareIcon } from '../components/Icons';
 
@@ -11,9 +11,7 @@ export default function Tasks() {
   const [filter, setFilter] = useState('all');
   const { showToast } = useToast();
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
   async function load() {
     const all = await db.tasks.orderBy('dueDate').toArray();
@@ -21,11 +19,12 @@ export default function Tasks() {
   }
 
   function openNew() {
-    setEditTask({ title: '', description: '', priority: 'medium', dueDate: '', completed: 0, reminder: '' });
+    setEditTask({ title: '', description: '', priority: 'medium', dueDate: '', completed: 0 });
     setShowModal(true);
   }
 
-  function openEdit(task) {
+  function openEdit(e, task) {
+    e.stopPropagation();
     setEditTask({ ...task });
     setShowModal(true);
   }
@@ -59,13 +58,33 @@ export default function Tasks() {
     load();
   }
 
+  function getTaskUrgency(task) {
+    if (task.completed) return 'done';
+    if (!task.dueDate) return 'none';
+    const today = startOfDay(new Date());
+    const due = startOfDay(parseISO(task.dueDate));
+    const days = differenceInDays(due, today);
+    if (days < 0) return 'overdue';
+    if (days === 0) return 'due-today';
+    if (days <= 2) return 'due-soon';
+    return 'none';
+  }
+
+  const urgencyColors = {
+    done: { bg: 'rgba(52,211,153,0.08)', border: 'var(--green)', text: 'var(--green)' },
+    overdue: { bg: 'rgba(248,113,113,0.08)', border: 'var(--red)', text: 'var(--red)' },
+    'due-today': { bg: 'rgba(248,113,113,0.08)', border: 'var(--red)', text: 'var(--red)' },
+    'due-soon': { bg: 'rgba(251,191,36,0.08)', border: 'var(--yellow)', text: 'var(--yellow)' },
+    none: { bg: '', border: 'var(--border)', text: 'var(--text-secondary)' },
+  };
+
+  const priorityColors = { high: 'var(--red)', medium: 'var(--yellow)', low: 'var(--accent)' };
+
   const filtered = tasks.filter(t => {
     if (filter === 'pending') return !t.completed;
     if (filter === 'completed') return t.completed;
     return true;
   });
-
-  const priorityColors = { high: 'var(--red)', medium: 'var(--yellow)', low: 'var(--accent)' };
 
   return (
     <div>
@@ -93,38 +112,63 @@ export default function Tasks() {
           </div>
         </div>
       ) : (
-        filtered.map(task => (
-          <div key={task.id} className="card" style={{marginBottom:8, cursor:'pointer'}} onClick={() => openEdit(task)}>
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
-              <div style={{display:'flex', alignItems:'center', gap:8, flex:1}}>
-                <input type="checkbox" checked={!!task.completed}
-                  onChange={(e) => { e.stopPropagation(); handleToggleComplete(task); }}
-                  style={{width:18, height:18, accentColor:'var(--accent)', cursor:'pointer'}} />
-                <div>
+        filtered.map(task => {
+          const urgency = getTaskUrgency(task);
+          const colors = urgencyColors[urgency];
+          return (
+            <div key={task.id} className="card" style={{
+              marginBottom:8, cursor:'pointer', padding:'12px 14px',
+              background: colors.bg || 'var(--bg-card)',
+              borderLeft: `3px solid ${colors.border}`,
+              transition: 'all 0.12s'
+            }} onClick={() => handleToggleComplete(task)}>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:10}}>
+                <div style={{display:'flex', alignItems:'center', gap:10, flex:1, minWidth:0}}>
                   <div style={{
-                    fontSize:14, fontWeight:600,
-                    textDecoration: task.completed ? 'line-through' : 'none',
-                    color: task.completed ? 'var(--text-muted)' : 'var(--text-primary)'
-                  }}>{task.title}</div>
-                  {task.description && <div style={{fontSize:12, color:'var(--text-secondary)', marginTop:2}}>{task.description}</div>}
-                  <div style={{display:'flex', gap:8, marginTop:4, fontSize:11}}>
-                    {task.priority && (
-                      <span style={{display:'inline-flex', alignItems:'center', gap:4, color: priorityColors[task.priority]}}>
-                        <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg>
-                        {task.priority}
-                      </span>
-                    )}
-                    {task.dueDate && (
-                      <span style={{color:'var(--text-muted)'}}>
-                        Due: {format(parseISO(task.dueDate), 'MMM d, yyyy')}
-                      </span>
-                    )}
+                    width:22, height:22, borderRadius:6, flexShrink:0,
+                    border: `2px solid ${task.completed ? 'var(--green)' : urgency === 'overdue' || urgency === 'due-today' ? 'var(--red)' : urgency === 'due-soon' ? 'var(--yellow)' : 'var(--text-muted)'}`,
+                    background: task.completed ? 'var(--green)' : 'transparent',
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    transition: 'all 0.12s'
+                  }}>
+                    {task.completed && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="4,13 9,18 20,7"/></svg>}
+                  </div>
+                  <div style={{minWidth:0}}>
+                    <div style={{
+                      fontSize:14, fontWeight:600,
+                      textDecoration: task.completed ? 'line-through' : 'none',
+                      color: task.completed ? 'var(--green)' : 'var(--text)',
+                      overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'
+                    }}>{task.title}</div>
+                    {task.description && <div style={{
+                      fontSize:12, color:'var(--text-secondary)', marginTop:2,
+                      overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'
+                    }}>{task.description}</div>}
+                    <div style={{display:'flex', gap:10, marginTop:4, fontSize:11, flexWrap:'wrap'}}>
+                      {task.priority && (
+                        <span style={{display:'inline-flex', alignItems:'center', gap:3, color: priorityColors[task.priority]}}>
+                          <svg width="7" height="7" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg>
+                          {task.priority}
+                        </span>
+                      )}
+                      {task.dueDate && (
+                        <span style={{color: colors.text}}>
+                          Due: {format(parseISO(task.dueDate), 'MMM d, yyyy')}
+                          {urgency === 'overdue' && ' (Overdue!)'}
+                          {urgency === 'due-today' && ' (Today!)'}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
+                <button className="btn btn-sm btn-ghost" style={{flexShrink:0, fontSize:16, lineHeight:1, padding:'2px 6px'}}
+                  onClick={(e) => openEdit(e, task)}>
+                  &#8942;
+                </button>
               </div>
             </div>
-          </div>
-        ))
+          );
+        })
       )}
 
       {showModal && (

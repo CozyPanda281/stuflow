@@ -31,6 +31,8 @@ function ToastContainer({ toasts }) {
   );
 }
 
+export const APP_VERSION = '1.0.1';
+
 export default function App() {
   const [toasts, setToasts] = useState([]);
   const [activeLeave, setActiveLeave] = useState(null);
@@ -46,6 +48,23 @@ export default function App() {
   useEffect(() => {
     getActiveLeave().then(setActiveLeave);
     startNotificationService();
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then(reg => {
+        if (reg.waiting) {
+          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          window.location.reload();
+        }
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker?.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
+              setTimeout(() => window.location.reload(), 500);
+            }
+          });
+        });
+      });
+    }
     return () => stopNotificationService();
   }, []);
 

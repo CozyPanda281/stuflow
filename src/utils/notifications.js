@@ -16,7 +16,7 @@ export function showNotification(title, body) {
   if (!('Notification' in window)) return;
   if (Notification.permission !== 'granted') return;
   try {
-    new Notification(title, { body, icon: '/icon-192.svg' });
+    new Notification(title, { body, icon: '/icon-192.png' });
   } catch (e) {
   }
 }

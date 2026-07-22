@@ -9,6 +9,7 @@ export default function MasterTimetable() {
   const [activeDay, setActiveDay] = useState(DAYS[new Date().getDay() - 1] || 'Monday');
   const [loading, setLoading] = useState(true);
   const [copyModal, setCopyModal] = useState(null);
+  const [smartFillModal, setSmartFillModal] = useState(null);
   const { showToast } = useToast();
 
   useEffect(() => { loadTimetable(); }, []);
@@ -131,6 +132,71 @@ export default function MasterTimetable() {
     showToast(`Copied to ${copyModal.days.length} day(s)`, 'success');
   }
 
+  function detectPatterns() {
+    const suggestions = [];
+    const maxPeriods = Math.max(...DAYS.map(d => (timetableData[d] || []).length));
+
+    for (let pi = 0; pi < maxPeriods; pi++) {
+      const filled = [];
+      const emptyDays = [];
+
+      for (const day of DAYS) {
+        const periods = timetableData[day];
+        if (!periods || pi >= periods.length) continue;
+        const p = periods[pi];
+        if (p.subject) {
+          filled.push({ day, subject: p.subject, faculty: p.faculty });
+        } else {
+          emptyDays.push(day);
+        }
+      }
+
+      if (emptyDays.length === 0) continue;
+
+      const groups = {};
+      for (const f of filled) {
+        if (!groups[f.subject]) groups[f.subject] = { subject: f.subject, entries: [], faculties: {} };
+        groups[f.subject].entries.push(f.day);
+        groups[f.subject].faculties[f.faculty] = (groups[f.subject].faculties[f.faculty] || 0) + 1;
+      }
+
+      for (const subjectKey of Object.keys(groups)) {
+        const g = groups[subjectKey];
+        if (g.entries.length < 2) continue;
+        const bestFaculty = Object.keys(g.faculties).sort((a, b) => g.faculties[b] - g.faculties[a])[0] || '';
+        for (const day of emptyDays) {
+          const exists = suggestions.some(s => s.day === day && s.periodIdx === pi);
+          if (!exists) {
+            suggestions.push({ day, periodIdx: pi, subject: subjectKey, faculty: bestFaculty });
+          }
+        }
+      }
+    }
+    return suggestions;
+  }
+
+  function handleSmartFill() {
+    const suggestions = detectPatterns();
+    if (suggestions.length === 0) {
+      showToast('No patterns detected to fill', 'info');
+      return;
+    }
+    setSmartFillModal(suggestions);
+  }
+
+  function applySmartFill() {
+    if (!smartFillModal) return;
+    const updated = { ...timetableData };
+    for (const s of smartFillModal) {
+      updated[s.day] = updated[s.day].map((p, i) =>
+        i === s.periodIdx ? { ...p, subject: s.subject, faculty: s.faculty } : p
+      );
+    }
+    setTimetableData(updated);
+    setSmartFillModal(null);
+    showToast(`Filled ${smartFillModal.length} empty slot(s)`, 'success');
+  }
+
   async function handleSaveDay() {
     const day = activeDay;
     const periods = timetableData[day];
@@ -164,6 +230,7 @@ export default function MasterTimetable() {
           <p>Set your permanent weekly schedule</p>
         </div>
         <div className="inline-flex">
+          <button className="btn btn-sm" onClick={handleSmartFill} style={{color:'var(--accent)'}}>&#9889; Smart Fill</button>
           <button className="btn btn-sm" onClick={handleClearDay}>Clear Day</button>
           <button className="btn btn-sm btn-primary" onClick={handleSaveDay}>Save Day</button>
         </div>
@@ -254,6 +321,37 @@ export default function MasterTimetable() {
           </div>
         )}
       </div>
+
+      {smartFillModal && (
+        <div className="modal-overlay" onClick={() => setSmartFillModal(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h3>&#9889; Smart Fill Suggestions</h3>
+            <p style={{fontSize:13, color:'var(--text-secondary)', marginBottom:12}}>
+              Found patterns across your week. Fill these empty slots?
+            </p>
+            <div style={{maxHeight:300, overflowY:'auto', marginBottom:12}}>
+              {smartFillModal.map((s, i) => (
+                <div key={i} style={{
+                  display:'flex', justifyContent:'space-between', alignItems:'center',
+                  padding:'6px 8px', borderRadius:6, fontSize:13,
+                  background: i % 2 === 0 ? 'transparent' : 'var(--bg-hover)',
+                  marginBottom:2
+                }}>
+                  <span style={{fontWeight:600, minWidth:70}}>{s.day.slice(0, 3)}</span>
+                  <span style={{flex:1}}>Period {s.periodIdx + 1}: <strong>{s.subject}</strong></span>
+                  {s.faculty && <span style={{color:'var(--text-muted)', fontSize:12}}>{s.faculty}</span>}
+                </div>
+              ))}
+            </div>
+            <div className="modal-actions">
+              <button className="btn" onClick={() => setSmartFillModal(null)}>Cancel</button>
+              <button className="btn btn-primary" onClick={applySmartFill}>
+                Fill {smartFillModal.length} slot(s)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {copyModal && (
         <div className="modal-overlay" onClick={() => setCopyModal(null)}>

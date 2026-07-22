@@ -9,6 +9,22 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Aditya</title>
+    <script>
+      (function(){
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(r){
+            for (var i=0;i<r.length;i++) r[i].unregister();
+            if (r.length>0 && !sessionStorage.getItem('swk')) {
+              sessionStorage.setItem('swk','1');
+              window.location.reload();
+            }
+          });
+        }
+        if (window.caches) {
+          caches.keys().then(function(n){ for (var i=0;i<n.length;i++) caches.delete(n[i]); });
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

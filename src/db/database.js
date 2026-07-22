@@ -97,7 +97,6 @@ export async function getOrCreateDaySchedule(dateStr) {
       period: e.period,
       subject: e.subject,
       faculty: e.faculty,
-      classroom: e.classroom,
       startTime: e.startTime,
       endTime: e.endTime,
       status: 'scheduled'
@@ -113,6 +112,26 @@ export async function getOrCreateDaySchedule(dateStr) {
     };
     await db.daySchedules.add(schedule);
     schedule = await db.daySchedules.where('date').equals(dateStr).first();
+  } else {
+    const hasSubjects = schedule.actual?.some(p => p.subject);
+    if (!hasSubjects && (!schedule.modifications || schedule.modifications.length === 0)) {
+      const timetableEntries = await db.timetable.where('dayOfWeek').equals(schedule.dayName).sortBy('period');
+      if (timetableEntries.some(e => e.subject)) {
+        const planned = timetableEntries.map(e => ({
+          period: e.period,
+          subject: e.subject,
+          faculty: e.faculty,
+          startTime: e.startTime,
+          endTime: e.endTime,
+          status: 'scheduled'
+        }));
+        await db.daySchedules.update(schedule.id, {
+          planned,
+          actual: JSON.parse(JSON.stringify(planned))
+        });
+        schedule = await db.daySchedules.where('date').equals(dateStr).first();
+      }
+    }
   }
   return schedule;
 }

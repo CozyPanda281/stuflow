@@ -15,64 +15,64 @@ db.version(1).stores({
 
 export const defaultTimetable = {
   Monday: [
-    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '09:50' },
-    { period: 2, subject: '', faculty: '', classroom: '', startTime: '09:55', endTime: '10:45' },
-    { period: 3, subject: '', faculty: '', classroom: '', startTime: '10:50', endTime: '11:40' },
-    { period: 4, subject: '', faculty: '', classroom: '', startTime: '11:45', endTime: '12:35' },
-    { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '14:50' },
-    { period: 6, subject: '', faculty: '', classroom: '', startTime: '14:55', endTime: '15:45' },
-    { period: 7, subject: '', faculty: '', classroom: '', startTime: '15:50', endTime: '16:40' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '16:45', endTime: '17:35' }
+    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '10:00' },
+    { period: 2, subject: '', faculty: '', classroom: '', startTime: '10:00', endTime: '11:00' },
+    { period: 3, subject: '', faculty: '', classroom: '', startTime: '11:00', endTime: '12:00' },
+    { period: 4, subject: '', faculty: '', classroom: '', startTime: '12:00', endTime: '13:00' },
+    { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '15:00' },
+    { period: 6, subject: '', faculty: '', classroom: '', startTime: '15:00', endTime: '16:00' },
+    { period: 7, subject: '', faculty: '', classroom: '', startTime: '16:00', endTime: '17:00' },
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '17:00', endTime: '18:00' }
   ],
   Tuesday: [
-    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '09:50' },
-    { period: 2, subject: '', faculty: '', classroom: '', startTime: '09:55', endTime: '10:45' },
-    { period: 3, subject: '', faculty: '', classroom: '', startTime: '10:50', endTime: '11:40' },
-    { period: 4, subject: '', faculty: '', classroom: '', startTime: '11:45', endTime: '12:35' },
-    { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '14:50' },
-    { period: 6, subject: '', faculty: '', classroom: '', startTime: '14:55', endTime: '15:45' },
-    { period: 7, subject: '', faculty: '', classroom: '', startTime: '15:50', endTime: '16:40' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '16:45', endTime: '17:35' }
+    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '10:00' },
+    { period: 2, subject: '', faculty: '', classroom: '', startTime: '10:00', endTime: '11:00' },
+    { period: 3, subject: '', faculty: '', classroom: '', startTime: '11:00', endTime: '12:00' },
+    { period: 4, subject: '', faculty: '', classroom: '', startTime: '12:00', endTime: '13:00' },
+    { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '15:00' },
+    { period: 6, subject: '', faculty: '', classroom: '', startTime: '15:00', endTime: '16:00' },
+    { period: 7, subject: '', faculty: '', classroom: '', startTime: '16:00', endTime: '17:00' },
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '17:00', endTime: '18:00' }
   ],
   Wednesday: [
-    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '09:50' },
-    { period: 2, subject: '', faculty: '', classroom: '', startTime: '09:55', endTime: '10:45' },
-    { period: 3, subject: '', faculty: '', classroom: '', startTime: '10:50', endTime: '11:40' },
-    { period: 4, subject: '', faculty: '', classroom: '', startTime: '11:45', endTime: '12:35' },
-    { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '14:50' },
-    { period: 6, subject: '', faculty: '', classroom: '', startTime: '14:55', endTime: '15:45' },
-    { period: 7, subject: '', faculty: '', classroom: '', startTime: '15:50', endTime: '16:40' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '16:45', endTime: '17:35' }
+    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '10:00' },
+    { period: 2, subject: '', faculty: '', classroom: '', startTime: '10:00', endTime: '11:00' },
+    { period: 3, subject: '', faculty: '', classroom: '', startTime: '11:00', endTime: '12:00' },
+    { period: 4, subject: '', faculty: '', classroom: '', startTime: '12:00', endTime: '13:00' },
+    { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '15:00' },
+    { period: 6, subject: '', faculty: '', classroom: '', startTime: '15:00', endTime: '16:00' },
+    { period: 7, subject: '', faculty: '', classroom: '', startTime: '16:00', endTime: '17:00' },
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '17:00', endTime: '18:00' }
   ],
   Thursday: [
-    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '09:50' },
-    { period: 2, subject: '', faculty: '', classroom: '', startTime: '09:55', endTime: '10:45' },
-    { period: 3, subject: '', faculty: '', classroom: '', startTime: '10:50', endTime: '11:40' },
-    { period: 4, subject: '', faculty: '', classroom: '', startTime: '11:45', endTime: '12:35' },
-    { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '14:50' },
-    { period: 6, subject: '', faculty: '', classroom: '', startTime: '14:55', endTime: '15:45' },
-    { period: 7, subject: '', faculty: '', classroom: '', startTime: '15:50', endTime: '16:40' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '16:45', endTime: '17:35' }
+    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '10:00' },
+    { period: 2, subject: '', faculty: '', classroom: '', startTime: '10:00', endTime: '11:00' },
+    { period: 3, subject: '', faculty: '', classroom: '', startTime: '11:00', endTime: '12:00' },
+    { period: 4, subject: '', faculty: '', classroom: '', startTime: '12:00', endTime: '13:00' },
+    { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '15:00' },
+    { period: 6, subject: '', faculty: '', classroom: '', startTime: '15:00', endTime: '16:00' },
+    { period: 7, subject: '', faculty: '', classroom: '', startTime: '16:00', endTime: '17:00' },
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '17:00', endTime: '18:00' }
   ],
   Friday: [
-    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '09:50' },
-    { period: 2, subject: '', faculty: '', classroom: '', startTime: '09:55', endTime: '10:45' },
-    { period: 3, subject: '', faculty: '', classroom: '', startTime: '10:50', endTime: '11:40' },
-    { period: 4, subject: '', faculty: '', classroom: '', startTime: '11:45', endTime: '12:35' },
-    { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '14:50' },
-    { period: 6, subject: '', faculty: '', classroom: '', startTime: '14:55', endTime: '15:45' },
-    { period: 7, subject: '', faculty: '', classroom: '', startTime: '15:50', endTime: '16:40' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '16:45', endTime: '17:35' }
+    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '10:00' },
+    { period: 2, subject: '', faculty: '', classroom: '', startTime: '10:00', endTime: '11:00' },
+    { period: 3, subject: '', faculty: '', classroom: '', startTime: '11:00', endTime: '12:00' },
+    { period: 4, subject: '', faculty: '', classroom: '', startTime: '12:00', endTime: '13:00' },
+    { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '15:00' },
+    { period: 6, subject: '', faculty: '', classroom: '', startTime: '15:00', endTime: '16:00' },
+    { period: 7, subject: '', faculty: '', classroom: '', startTime: '16:00', endTime: '17:00' },
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '17:00', endTime: '18:00' }
   ],
   Saturday: [
-    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '09:50' },
-    { period: 2, subject: '', faculty: '', classroom: '', startTime: '09:55', endTime: '10:45' },
-    { period: 3, subject: '', faculty: '', classroom: '', startTime: '10:50', endTime: '11:40' },
-    { period: 4, subject: '', faculty: '', classroom: '', startTime: '11:45', endTime: '12:35' },
-    { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '14:50' },
-    { period: 6, subject: '', faculty: '', classroom: '', startTime: '14:55', endTime: '15:45' },
-    { period: 7, subject: '', faculty: '', classroom: '', startTime: '15:50', endTime: '16:40' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '16:45', endTime: '17:35' }
+    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '10:00' },
+    { period: 2, subject: '', faculty: '', classroom: '', startTime: '10:00', endTime: '11:00' },
+    { period: 3, subject: '', faculty: '', classroom: '', startTime: '11:00', endTime: '12:00' },
+    { period: 4, subject: '', faculty: '', classroom: '', startTime: '12:00', endTime: '13:00' },
+    { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '15:00' },
+    { period: 6, subject: '', faculty: '', classroom: '', startTime: '15:00', endTime: '16:00' },
+    { period: 7, subject: '', faculty: '', classroom: '', startTime: '16:00', endTime: '17:00' },
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '17:00', endTime: '18:00' }
   ],
   Sunday: []
 };

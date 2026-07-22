@@ -22,7 +22,7 @@ export const defaultTimetable = {
     { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '15:00' },
     { period: 6, subject: '', faculty: '', classroom: '', startTime: '15:00', endTime: '16:00' },
     { period: 7, subject: '', faculty: '', classroom: '', startTime: '16:00', endTime: '17:00' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '17:00', endTime: '18:00' }
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '', endTime: '' }
   ],
   Tuesday: [
     { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '10:00' },
@@ -32,7 +32,7 @@ export const defaultTimetable = {
     { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '15:00' },
     { period: 6, subject: '', faculty: '', classroom: '', startTime: '15:00', endTime: '16:00' },
     { period: 7, subject: '', faculty: '', classroom: '', startTime: '16:00', endTime: '17:00' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '17:00', endTime: '18:00' }
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '', endTime: '' }
   ],
   Wednesday: [
     { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '10:00' },
@@ -42,7 +42,7 @@ export const defaultTimetable = {
     { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '15:00' },
     { period: 6, subject: '', faculty: '', classroom: '', startTime: '15:00', endTime: '16:00' },
     { period: 7, subject: '', faculty: '', classroom: '', startTime: '16:00', endTime: '17:00' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '17:00', endTime: '18:00' }
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '', endTime: '' }
   ],
   Thursday: [
     { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '10:00' },
@@ -52,7 +52,7 @@ export const defaultTimetable = {
     { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '15:00' },
     { period: 6, subject: '', faculty: '', classroom: '', startTime: '15:00', endTime: '16:00' },
     { period: 7, subject: '', faculty: '', classroom: '', startTime: '16:00', endTime: '17:00' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '17:00', endTime: '18:00' }
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '', endTime: '' }
   ],
   Friday: [
     { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '10:00' },
@@ -62,7 +62,7 @@ export const defaultTimetable = {
     { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '15:00' },
     { period: 6, subject: '', faculty: '', classroom: '', startTime: '15:00', endTime: '16:00' },
     { period: 7, subject: '', faculty: '', classroom: '', startTime: '16:00', endTime: '17:00' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '17:00', endTime: '18:00' }
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '', endTime: '' }
   ],
   Saturday: [
     { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '10:00' },
@@ -72,7 +72,7 @@ export const defaultTimetable = {
     { period: 5, subject: '', faculty: '', classroom: '', startTime: '14:00', endTime: '15:00' },
     { period: 6, subject: '', faculty: '', classroom: '', startTime: '15:00', endTime: '16:00' },
     { period: 7, subject: '', faculty: '', classroom: '', startTime: '16:00', endTime: '17:00' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '17:00', endTime: '18:00' }
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '', endTime: '' }
   ],
   Sunday: []
 };

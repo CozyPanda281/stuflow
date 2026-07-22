@@ -203,7 +203,7 @@ export default function MasterTimetable() {
     setSmartFillModal(suggestions);
   }
 
-  function applySmartFill() {
+  async function applySmartFill() {
     if (!smartFillModal) return;
     const updated = { ...timetableData };
     for (const s of smartFillModal) {
@@ -212,14 +212,30 @@ export default function MasterTimetable() {
       );
     }
     setTimetableData(updated);
+    for (const day of [...new Set(smartFillModal.map(s => s.day))]) {
+      await saveTimetableDay(day, updated[day]);
+    }
     setSmartFillModal(null);
-    showToast(`Filled ${smartFillModal.length} empty slot(s)`, 'success');
+    showToast(`Filled ${smartFillModal.length} empty slot(s) & saved`, 'success');
+  }
+
+  async function saveDay(day) {
+    const periods = timetableData[day];
+    if (!periods) return;
+    const hasData = periods.some(p => p.subject);
+    if (hasData) {
+      await saveTimetableDay(day, periods);
+    }
+  }
+
+  async function handleDaySwitch(day) {
+    await saveDay(activeDay);
+    setActiveDay(day);
   }
 
   async function handleSaveDay() {
     const day = activeDay;
-    const periods = timetableData[day];
-    await saveTimetableDay(day, periods);
+    await saveDay(day);
     showToast(`${day} timetable saved`, 'success');
   }
 
@@ -258,7 +274,7 @@ export default function MasterTimetable() {
       <div className="tabs">
         {DAYS.filter(d => d !== 'Sunday' || timetableData[d]?.some(p => p.subject)).map(day => (
           <button key={day} className={`tab ${activeDay === day ? 'active' : ''}`}
-            onClick={() => setActiveDay(day)}>
+            onClick={() => handleDaySwitch(day)}>
             {day.slice(0, 3)}
           </button>
         ))}

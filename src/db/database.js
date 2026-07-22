@@ -15,64 +15,64 @@ db.version(1).stores({
 
 export const defaultTimetable = {
   Monday: [
-    { period: 1, subject: '', faculty: '', classroom: '', startTime: '08:00', endTime: '08:50' },
-    { period: 2, subject: '', faculty: '', classroom: '', startTime: '08:55', endTime: '09:45' },
-    { period: 3, subject: '', faculty: '', classroom: '', startTime: '09:50', endTime: '10:40' },
-    { period: 4, subject: '', faculty: '', classroom: '', startTime: '10:45', endTime: '11:35' },
-    { period: 5, subject: '', faculty: '', classroom: '', startTime: '11:40', endTime: '12:30' },
-    { period: 6, subject: '', faculty: '', classroom: '', startTime: '13:00', endTime: '13:50' },
-    { period: 7, subject: '', faculty: '', classroom: '', startTime: '13:55', endTime: '14:45' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '14:50', endTime: '15:40' }
+    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '09:50' },
+    { period: 2, subject: '', faculty: '', classroom: '', startTime: '09:55', endTime: '10:45' },
+    { period: 3, subject: '', faculty: '', classroom: '', startTime: '10:50', endTime: '11:40' },
+    { period: 4, subject: '', faculty: '', classroom: '', startTime: '11:45', endTime: '12:35' },
+    { period: 5, subject: '', faculty: '', classroom: '', startTime: '13:30', endTime: '14:20' },
+    { period: 6, subject: '', faculty: '', classroom: '', startTime: '14:25', endTime: '15:15' },
+    { period: 7, subject: '', faculty: '', classroom: '', startTime: '15:20', endTime: '16:10' },
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '16:15', endTime: '17:05' }
   ],
   Tuesday: [
-    { period: 1, subject: '', faculty: '', classroom: '', startTime: '08:00', endTime: '08:50' },
-    { period: 2, subject: '', faculty: '', classroom: '', startTime: '08:55', endTime: '09:45' },
-    { period: 3, subject: '', faculty: '', classroom: '', startTime: '09:50', endTime: '10:40' },
-    { period: 4, subject: '', faculty: '', classroom: '', startTime: '10:45', endTime: '11:35' },
-    { period: 5, subject: '', faculty: '', classroom: '', startTime: '11:40', endTime: '12:30' },
-    { period: 6, subject: '', faculty: '', classroom: '', startTime: '13:00', endTime: '13:50' },
-    { period: 7, subject: '', faculty: '', classroom: '', startTime: '13:55', endTime: '14:45' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '14:50', endTime: '15:40' }
+    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '09:50' },
+    { period: 2, subject: '', faculty: '', classroom: '', startTime: '09:55', endTime: '10:45' },
+    { period: 3, subject: '', faculty: '', classroom: '', startTime: '10:50', endTime: '11:40' },
+    { period: 4, subject: '', faculty: '', classroom: '', startTime: '11:45', endTime: '12:35' },
+    { period: 5, subject: '', faculty: '', classroom: '', startTime: '13:30', endTime: '14:20' },
+    { period: 6, subject: '', faculty: '', classroom: '', startTime: '14:25', endTime: '15:15' },
+    { period: 7, subject: '', faculty: '', classroom: '', startTime: '15:20', endTime: '16:10' },
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '16:15', endTime: '17:05' }
   ],
   Wednesday: [
-    { period: 1, subject: '', faculty: '', classroom: '', startTime: '08:00', endTime: '08:50' },
-    { period: 2, subject: '', faculty: '', classroom: '', startTime: '08:55', endTime: '09:45' },
-    { period: 3, subject: '', faculty: '', classroom: '', startTime: '09:50', endTime: '10:40' },
-    { period: 4, subject: '', faculty: '', classroom: '', startTime: '10:45', endTime: '11:35' },
-    { period: 5, subject: '', faculty: '', classroom: '', startTime: '11:40', endTime: '12:30' },
-    { period: 6, subject: '', faculty: '', classroom: '', startTime: '13:00', endTime: '13:50' },
-    { period: 7, subject: '', faculty: '', classroom: '', startTime: '13:55', endTime: '14:45' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '14:50', endTime: '15:40' }
+    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '09:50' },
+    { period: 2, subject: '', faculty: '', classroom: '', startTime: '09:55', endTime: '10:45' },
+    { period: 3, subject: '', faculty: '', classroom: '', startTime: '10:50', endTime: '11:40' },
+    { period: 4, subject: '', faculty: '', classroom: '', startTime: '11:45', endTime: '12:35' },
+    { period: 5, subject: '', faculty: '', classroom: '', startTime: '13:30', endTime: '14:20' },
+    { period: 6, subject: '', faculty: '', classroom: '', startTime: '14:25', endTime: '15:15' },
+    { period: 7, subject: '', faculty: '', classroom: '', startTime: '15:20', endTime: '16:10' },
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '16:15', endTime: '17:05' }
   ],
   Thursday: [
-    { period: 1, subject: '', faculty: '', classroom: '', startTime: '08:00', endTime: '08:50' },
-    { period: 2, subject: '', faculty: '', classroom: '', startTime: '08:55', endTime: '09:45' },
-    { period: 3, subject: '', faculty: '', classroom: '', startTime: '09:50', endTime: '10:40' },
-    { period: 4, subject: '', faculty: '', classroom: '', startTime: '10:45', endTime: '11:35' },
-    { period: 5, subject: '', faculty: '', classroom: '', startTime: '11:40', endTime: '12:30' },
-    { period: 6, subject: '', faculty: '', classroom: '', startTime: '13:00', endTime: '13:50' },
-    { period: 7, subject: '', faculty: '', classroom: '', startTime: '13:55', endTime: '14:45' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '14:50', endTime: '15:40' }
+    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '09:50' },
+    { period: 2, subject: '', faculty: '', classroom: '', startTime: '09:55', endTime: '10:45' },
+    { period: 3, subject: '', faculty: '', classroom: '', startTime: '10:50', endTime: '11:40' },
+    { period: 4, subject: '', faculty: '', classroom: '', startTime: '11:45', endTime: '12:35' },
+    { period: 5, subject: '', faculty: '', classroom: '', startTime: '13:30', endTime: '14:20' },
+    { period: 6, subject: '', faculty: '', classroom: '', startTime: '14:25', endTime: '15:15' },
+    { period: 7, subject: '', faculty: '', classroom: '', startTime: '15:20', endTime: '16:10' },
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '16:15', endTime: '17:05' }
   ],
   Friday: [
-    { period: 1, subject: '', faculty: '', classroom: '', startTime: '08:00', endTime: '08:50' },
-    { period: 2, subject: '', faculty: '', classroom: '', startTime: '08:55', endTime: '09:45' },
-    { period: 3, subject: '', faculty: '', classroom: '', startTime: '09:50', endTime: '10:40' },
-    { period: 4, subject: '', faculty: '', classroom: '', startTime: '10:45', endTime: '11:35' },
-    { period: 5, subject: '', faculty: '', classroom: '', startTime: '11:40', endTime: '12:30' },
-    { period: 6, subject: '', faculty: '', classroom: '', startTime: '13:00', endTime: '13:50' },
-    { period: 7, subject: '', faculty: '', classroom: '', startTime: '13:55', endTime: '14:45' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '14:50', endTime: '15:40' }
+    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '09:50' },
+    { period: 2, subject: '', faculty: '', classroom: '', startTime: '09:55', endTime: '10:45' },
+    { period: 3, subject: '', faculty: '', classroom: '', startTime: '10:50', endTime: '11:40' },
+    { period: 4, subject: '', faculty: '', classroom: '', startTime: '11:45', endTime: '12:35' },
+    { period: 5, subject: '', faculty: '', classroom: '', startTime: '13:30', endTime: '14:20' },
+    { period: 6, subject: '', faculty: '', classroom: '', startTime: '14:25', endTime: '15:15' },
+    { period: 7, subject: '', faculty: '', classroom: '', startTime: '15:20', endTime: '16:10' },
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '16:15', endTime: '17:05' }
   ],
   Saturday: [
-    { period: 1, subject: '', faculty: '', classroom: '', startTime: '08:00', endTime: '08:50' },
-    { period: 2, subject: '', faculty: '', classroom: '', startTime: '08:55', endTime: '09:45' },
-    { period: 3, subject: '', faculty: '', classroom: '', startTime: '09:50', endTime: '10:40' },
-    { period: 4, subject: '', faculty: '', classroom: '', startTime: '10:45', endTime: '11:35' },
-    { period: 5, subject: '', faculty: '', classroom: '', startTime: '11:40', endTime: '12:30' },
-    { period: 6, subject: '', faculty: '', classroom: '', startTime: '13:00', endTime: '13:50' },
-    { period: 7, subject: '', faculty: '', classroom: '', startTime: '13:55', endTime: '14:45' },
-    { period: 8, subject: '', faculty: '', classroom: '', startTime: '14:50', endTime: '15:40' }
+    { period: 1, subject: '', faculty: '', classroom: '', startTime: '09:00', endTime: '09:50' },
+    { period: 2, subject: '', faculty: '', classroom: '', startTime: '09:55', endTime: '10:45' },
+    { period: 3, subject: '', faculty: '', classroom: '', startTime: '10:50', endTime: '11:40' },
+    { period: 4, subject: '', faculty: '', classroom: '', startTime: '11:45', endTime: '12:35' },
+    { period: 5, subject: '', faculty: '', classroom: '', startTime: '13:30', endTime: '14:20' },
+    { period: 6, subject: '', faculty: '', classroom: '', startTime: '14:25', endTime: '15:15' },
+    { period: 7, subject: '', faculty: '', classroom: '', startTime: '15:20', endTime: '16:10' },
+    { period: 8, subject: '', faculty: '', classroom: '', startTime: '16:15', endTime: '17:05' }
   ],
   Sunday: []
 };
@@ -110,6 +110,61 @@ export async function getOrCreateDaySchedule(dateStr) {
       modifications: [],
       isFinalized: false,
       finalizedAt: null
+    };
+    await db.daySchedules.add(schedule);
+    schedule = await db.daySchedules.where('date').equals(dateStr).first();
+  }
+  return schedule;
+}
+
+export async function checkAndFinalizeDay() {
+  const today = new Date().toISOString().split('T')[0];
+  const schedule = await db.daySchedules.where('date').equals(today).first();
+  if (!schedule || schedule.isFinalized) return;
+
+  const now = new Date();
+  const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+  const activeClasses = schedule.actual.filter(p => p.subject && p.status !== 'cancelled' && p.status !== 'holiday');
+  const allEnded = activeClasses.every(p => p.endTime < currentTime);
+
+  if (activeClasses.length > 0 && allEnded) {
+    await db.daySchedules.update(schedule.id, { isFinalized: true, finalizedAt: new Date().toISOString() });
+  }
+}
+
+export async function markDayAsHoliday(dateStr) {
+  let schedule = await db.daySchedules.where('date').equals(dateStr).first();
+  if (!schedule) {
+    const dayName = new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long' });
+    schedule = {
+      date: dateStr, dayName, planned: [], actual: [],
+      modifications: [{ action: 'holiday', timestamp: new Date().toISOString() }],
+      isFinalized: true, finalizedAt: new Date().toISOString(), isHoliday: true
+    };
+    await db.daySchedules.add(schedule);
+  } else {
+    await db.daySchedules.update(schedule.id, {
+      actual: [],
+      modifications: [...(schedule.modifications || []), { action: 'holiday', timestamp: new Date().toISOString() }],
+      isFinalized: true, finalizedAt: new Date().toISOString(), isHoliday: true
+    });
+  }
+}
+
+export async function getScheduleForDate(dateStr) {
+  let schedule = await db.daySchedules.where('date').equals(dateStr).first();
+  if (!schedule) {
+    const dayName = new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long' });
+    const timetableEntries = await db.timetable.where('dayOfWeek').equals(dayName).sortBy('period');
+    const planned = timetableEntries.map(e => ({
+      period: e.period, subject: e.subject, faculty: e.faculty,
+      classroom: e.classroom, startTime: e.startTime, endTime: e.endTime, status: 'scheduled'
+    }));
+    schedule = {
+      date: dateStr, dayName, planned,
+      actual: JSON.parse(JSON.stringify(planned)),
+      modifications: [], isFinalized: true, finalizedAt: new Date().toISOString()
     };
     await db.daySchedules.add(schedule);
     schedule = await db.daySchedules.where('date').equals(dateStr).first();

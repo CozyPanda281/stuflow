@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, parseISO, isSameDay } from 'date-fns';
-import db, { getOrCreateDaySchedule } from '../db/database';
+import { useState, useEffect, useRef } from 'react';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, parseISO, isSameDay, isBefore, startOfDay } from 'date-fns';
+import db, { getScheduleForDate } from '../db/database';
+import { useToast } from '../App';
+import { CheckIcon } from '../components/Icons';
 
 export default function Calendar() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -8,15 +10,18 @@ export default function Calendar() {
   const [dayData, setDayData] = useState(null);
   const [attendanceMap, setAttendanceMap] = useState({});
   const [schedules, setSchedules] = useState({});
+  const [attModal, setAttModal] = useState(null);
+  const [attStatus, setAttStatus] = useState('present');
+  const [attNote, setAttNote] = useState('');
+  const fileRef = useRef();
+  const { showToast } = useToast();
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
   const startPad = getDay(monthStart);
 
-  useEffect(() => {
-    loadMonthData();
-  }, [currentMonth]);
+  useEffect(() => { loadMonthData(); }, [currentMonth]);
 
   async function loadMonthData() {
     const attRecords = await db.attendance.toArray();
@@ -35,7 +40,7 @@ export default function Calendar() {
 
   async function openDay(date) {
     const dateStr = format(date, 'yyyy-MM-dd');
-    const schedule = await getOrCreateDaySchedule(dateStr);
+    const schedule = await getScheduleForDate(dateStr);
     setDayData({ date: dateStr, schedule });
     setSelectedDate(date);
   }
@@ -57,11 +62,42 @@ export default function Calendar() {
     return null;
   }
 
+  function openAttendance(period) {
+    const existing = (attendanceMap[dayData.date] || []).find(a => a.period === period.period);
+    setAttModal({ period, existing });
+    setAttStatus(existing?.status || 'present');
+    setAttNote(existing?.notes || '');
+  }
+
+  async function saveAttendance() {
+    if (!attModal) return;
+    const data = {
+      date: dayData.date,
+      subject: attModal.period.subject,
+      faculty: attModal.period.faculty,
+      period: attModal.period.period,
+      status: attStatus,
+      notes: attNote
+    };
+    if (attModal.existing) {
+      await db.attendance.update(attModal.existing.id, data);
+      showToast('Attendance updated', 'success');
+    } else {
+      await db.attendance.add(data);
+      showToast('Attendance recorded', 'success');
+    }
+    setAttModal(null);
+    loadMonthData();
+    if (selectedDate) openDay(selectedDate);
+  }
+
+  const isPast = selectedDate && isBefore(startOfDay(selectedDate), startOfDay(new Date()));
+
   return (
     <div>
       <div className="page-header">
         <h2>Calendar</h2>
-        <p>View your academic history</p>
+        <p>View and catch up on past days</p>
       </div>
 
       <div className="card mb-4">
@@ -85,15 +121,15 @@ export default function Calendar() {
           {days.map(day => {
             const dateStr = format(day, 'yyyy-MM-dd');
             const color = getDayColor(dateStr);
-            const isToday = isSameDay(day, new Date());
-            const isSelected = selectedDate && isSameDay(day, selectedDate);
+            const today = isSameDay(day, new Date());
+            const selected = selectedDate && isSameDay(day, selectedDate);
             return (
               <div key={dateStr} onClick={() => openDay(day)}
                 style={{
                   padding:'8px 4px', borderRadius:8, cursor:'pointer',
-                  fontSize:13, fontWeight: isToday ? 700 : 400,
-                  background: isSelected ? 'var(--accent)' : isToday ? 'var(--bg-hover)' : 'transparent',
-                  color: color || (isSelected ? 'white' : 'var(--text-primary)'),
+                  fontSize:13, fontWeight: today ? 700 : 400,
+                  background: selected ? 'var(--accent)' : today ? 'var(--bg-hover)' : 'transparent',
+                  color: color || (selected ? 'white' : 'var(--text-primary)'),
                   border: '1px solid transparent',
                   borderColor: color ? `${color}44` : 'transparent',
                   transition: 'all 0.1s'
@@ -108,24 +144,39 @@ export default function Calendar() {
       {dayData && (
         <div className="card">
           <div className="card-header">
-            <span className="card-title">{format(parseISO(dayData.date), 'EEEE, MMMM d, yyyy')}</span>
+            <span className="card-title">
+              {format(parseISO(dayData.date), 'EEEE, MMMM d, yyyy')}
+              {isPast && <span style={{marginLeft:8, fontSize:11, color:'var(--orange)'}}>&#9888; Past day — catch up</span>}
+            </span>
             <button className="btn btn-sm" onClick={() => setSelectedDate(null)}>Close</button>
           </div>
 
-          {dayData.schedule?.actual?.filter(p => p.subject).length > 0 ? (
+          {dayData.schedule?.isHoliday ? (
+            <div style={{padding:20, textAlign:'center', color:'var(--text-muted)'}}>This day is marked as a holiday</div>
+          ) : dayData.schedule?.actual?.filter(p => p.subject).length > 0 ? (
             dayData.schedule.actual.filter(p => p.subject).map(p => {
               const att = (attendanceMap[dayData.date] || []).find(a => a.period === p.period);
               return (
                 <div key={p.period} className="period-card" style={{
                   borderLeftColor: p.status === 'cancelled' ? 'var(--red)' : att ? 'var(--green)' : 'var(--accent)'
                 }}>
-                  <div className="period-time">Period {p.period}: {p.startTime} - {p.endTime}</div>
-                  <div className="period-subject">{p.subject}</div>
-                  <div className="period-details">
-                    {p.faculty && <span>{p.faculty} &middot; </span>}
-                    {p.classroom && <span>Room {p.classroom}</span>}
-                    {att && <span className={`status-badge status-${att.status}`} style={{marginLeft:8}}>{att.status}</span>}
-                    {p.status === 'cancelled' && <span className="status-badge status-cancelled" style={{marginLeft:8}}>Cancelled</span>}
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+                    <div style={{flex:1}}>
+                      <div className="period-time">Period {p.period}: {p.startTime} - {p.endTime}</div>
+                      <div className="period-subject">{p.subject}</div>
+                      <div className="period-details">
+                        {p.faculty && <span>{p.faculty} &middot; </span>}
+                        {p.classroom && <span>Room {p.classroom}</span>}
+                        {att && <span className={`status-badge status-${att.status}`} style={{marginLeft:8}}>{att.status}</span>}
+                        {p.status === 'cancelled' && <span className="status-badge status-cancelled" style={{marginLeft:8}}>Cancelled</span>}
+                      </div>
+                    </div>
+                    {isPast && p.status !== 'cancelled' && (
+                      <button className="btn btn-sm" style={{flexShrink:0, marginLeft:8}}
+                        onClick={() => openAttendance(p)}>
+                        {att ? 'Edit' : <><CheckIcon style={{width:12,height:12,stroke:'currentColor'}} /> Mark</>}
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -136,7 +187,7 @@ export default function Calendar() {
             </div>
           )}
 
-          {attendanceMap[dayData.date] && (
+          {attendanceMap[dayData.date] && attendanceMap[dayData.date].length > 0 && (
             <div style={{marginTop:12, paddingTop:12, borderTop:'1px solid var(--border)'}}>
               <div style={{fontSize:13, fontWeight:600, marginBottom:8}}>Attendance Records</div>
               {attendanceMap[dayData.date].map(r => (
@@ -147,6 +198,32 @@ export default function Calendar() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {attModal && (
+        <div className="modal-overlay" onClick={() => setAttModal(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h3>{attModal.existing ? 'Edit' : 'Mark'} Attendance — {attModal.period.subject}</h3>
+            <div className="form-group">
+              <label>Status</label>
+              <select value={attStatus} onChange={e => setAttStatus(e.target.value)}>
+                <option value="present">Present</option>
+                <option value="absent">Absent</option>
+                <option value="late">Late</option>
+                <option value="leave">Leave</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Notes (optional)</label>
+              <textarea value={attNote} onChange={e => setAttNote(e.target.value)} placeholder="Any notes..." />
+            </div>
+            <div className="modal-actions">
+              <button className="btn" onClick={() => setAttModal(null)}>Cancel</button>
+              <button className="btn btn-primary" onClick={saveAttendance}>Save</button>
+            </div>
+          </div>
         </div>
       )}
     </div>

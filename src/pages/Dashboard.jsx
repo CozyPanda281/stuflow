@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
-import db, { getOrCreateDaySchedule, getActiveLeave } from '../db/database';
+import db, { getOrCreateDaySchedule, getActiveLeave, checkAndFinalizeDay } from '../db/database';
 import { WarningIcon } from '../components/Icons';
 
 const iw = { width: 18, height: 18, stroke: 'currentColor', flexShrink: 0 };
@@ -12,19 +12,24 @@ export default function Dashboard() {
   const [pendingTasks, setPendingTasks] = useState([]);
   const [activeLeave, setActiveLeave] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [dayFinalized, setDayFinalized] = useState(false);
   const navigate = useNavigate();
 
   const today = format(new Date(), 'yyyy-MM-dd');
 
   useEffect(() => {
     loadDashboard();
-    const timer = setInterval(() => setCurrentTime(new Date()), 30000);
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+      checkAndFinalizeDay();
+    }, 30000);
     return () => clearInterval(timer);
   }, []);
 
   async function loadDashboard() {
     const schedule = await getOrCreateDaySchedule(today);
     setTodaySchedule(schedule);
+    setDayFinalized(schedule?.isFinalized || false);
 
     const allAttendance = await db.attendance.toArray();
     const total = allAttendance.length;
@@ -63,6 +68,13 @@ export default function Dashboard() {
           <button className="btn btn-sm btn-warning" style={{marginLeft:'auto'}} onClick={() => navigate('/leave')}>
             Manage
           </button>
+        </div>
+      )}
+
+      {dayFinalized && todaySchedule && !activeLeave && (
+        <div style={{background:'rgba(34,197,94,0.15)', border:'1px solid var(--green)', borderRadius:10, padding:'8px 12px', marginBottom:16, fontSize:13, display:'flex', alignItems:'center', gap:8}}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2.5"><polyline points="4,13 9,18 20,7"/></svg>
+          Today's classes are complete. Schedule finalized.
         </div>
       )}
 

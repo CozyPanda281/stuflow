@@ -74,6 +74,8 @@ body {
 
 .nav-tab.active { color: var(--accent); }
 .nav-tab svg { width: 22px; height: 22px; }
+.nav-tab svg * { fill: none; stroke: var(--text-muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.nav-tab.active svg * { stroke: var(--accent); }
 
 /* === CARDS === */
 .card {

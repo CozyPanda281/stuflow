@@ -87,7 +87,7 @@ export default function Dashboard() {
             <div>
               <div style={{fontSize:18, fontWeight:700}}>{currentPeriod.subject}</div>
               <div style={{fontSize:12, color:'var(--text-secondary)'}}>
-                {currentPeriod.faculty} &middot; {currentPeriod.classroom}
+                {currentPeriod.faculty}
               </div>
               <div style={{fontSize:11, color:'var(--text-muted)', marginTop:4}}>
                 Period {currentPeriod.period} ({currentPeriod.startTime} - {currentPeriod.endTime})
@@ -98,7 +98,7 @@ export default function Dashboard() {
               <div style={{fontSize:12, color:'var(--text-muted)'}}>Next class at {nextPeriod.startTime}</div>
               <div style={{fontSize:16, fontWeight:600, marginTop:4}}>{nextPeriod.subject}</div>
               <div style={{fontSize:12, color:'var(--text-secondary)'}}>
-                {nextPeriod.faculty} &middot; {nextPeriod.classroom}
+                {nextPeriod.faculty}
               </div>
             </div>
           ) : (

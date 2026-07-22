@@ -138,7 +138,6 @@ export default function LiveDayEditor() {
       period: maxPeriod + 1,
       subject: '',
       faculty: '',
-      classroom: '',
       startTime: lastEntry ? lastEntry.endTime : '16:00',
       endTime: lastEntry ? addHour(lastEntry.endTime) : '16:50',
       status: 'scheduled'
@@ -226,7 +225,7 @@ export default function LiveDayEditor() {
           const planned = schedule.planned.find(p => p.period === period.period);
           const isDifferent = planned && (
             planned.subject !== period.subject || planned.faculty !== period.faculty ||
-            planned.classroom !== period.classroom || planned.startTime !== period.startTime
+            planned.startTime !== period.startTime
           );
           const isSwapTarget = swapMode && swapMode !== period.period;
 
@@ -251,8 +250,7 @@ export default function LiveDayEditor() {
                 <>
                   <div className="period-subject">{period.subject}</div>
                   <div className="period-details">
-                    {period.faculty && <span>{period.faculty} &middot; </span>}
-                    {period.classroom && <span>Room {period.classroom}</span>}
+                    {period.faculty && <span>{period.faculty}</span>}
                   </div>
                 </>
               ) : (
@@ -316,10 +314,6 @@ export default function LiveDayEditor() {
             <div className="form-group">
               <label>Faculty</label>
               <input value={editModal.faculty || ''} onChange={e => setEditModal({...editModal, faculty: e.target.value})} placeholder="e.g. Dr. Smith" />
-            </div>
-            <div className="form-group">
-              <label>Classroom</label>
-              <input value={editModal.classroom || ''} onChange={e => setEditModal({...editModal, classroom: e.target.value})} placeholder="e.g. A-201" />
             </div>
             <div className="grid-2">
               <div className="form-group">

@@ -8,11 +8,10 @@ export default function MasterTimetable() {
   const [timetableData, setTimetableData] = useState({});
   const [activeDay, setActiveDay] = useState(DAYS[new Date().getDay() - 1] || 'Monday');
   const [loading, setLoading] = useState(true);
+  const [copyModal, setCopyModal] = useState(null);
   const { showToast } = useToast();
 
-  useEffect(() => {
-    loadTimetable();
-  }, []);
+  useEffect(() => { loadTimetable(); }, []);
 
   async function loadTimetable() {
     setLoading(true);
@@ -22,8 +21,11 @@ export default function MasterTimetable() {
       const defaultPeriods = defaultTimetable[day] || [];
       data[day] = entries.length > 0 ? entries.map(e => ({
         period: e.period, subject: e.subject || '', faculty: e.faculty || '',
-        classroom: e.classroom || '', startTime: e.startTime, endTime: e.endTime
-      })) : defaultPeriods;
+        startTime: e.startTime, endTime: e.endTime
+      })) : defaultPeriods.map(p => ({
+        period: p.period, subject: '', faculty: '',
+        startTime: p.startTime, endTime: p.endTime
+      }));
     }
     setTimetableData(data);
     setLoading(false);
@@ -33,6 +35,100 @@ export default function MasterTimetable() {
     const updated = { ...timetableData };
     updated[day] = updated[day].map((p, i) => i === idx ? { ...p, [field]: value } : p);
     setTimetableData(updated);
+  }
+
+  function renumber(periods) {
+    return periods.map((p, i) => ({ ...p, period: i + 1 }));
+  }
+
+  function handleMerge(idx) {
+    const day = activeDay;
+    const periods = timetableData[day];
+    if (idx >= periods.length - 1) {
+      showToast('No next period to merge with', 'error');
+      return;
+    }
+    const current = periods[idx];
+    const next = periods[idx + 1];
+    const mergedName = current.subject && next.subject
+      ? `${current.subject} + ${next.subject}`
+      : (current.subject || next.subject);
+    const updated = { ...timetableData };
+    const merged = { ...current, subject: mergedName, endTime: next.endTime };
+    updated[day] = renumber([...periods.slice(0, idx), merged, ...periods.slice(idx + 2)]);
+    setTimetableData(updated);
+    showToast('Periods merged', 'success');
+  }
+
+  function handleDelete(idx) {
+    const day = activeDay;
+    const periods = timetableData[day];
+    if (periods.length <= 1) {
+      showToast('Cannot delete the last period', 'error');
+      return;
+    }
+    const updated = { ...timetableData };
+    updated[day] = renumber([...periods.slice(0, idx), ...periods.slice(idx + 1)]);
+    setTimetableData(updated);
+    showToast('Period deleted', 'info');
+  }
+
+  function handleClear(idx) {
+    const day = activeDay;
+    const updated = { ...timetableData };
+    updated[day] = updated[day].map((p, i) => i === idx ? { ...p, subject: '', faculty: '' } : p);
+    setTimetableData(updated);
+  }
+
+  function handleAddPeriod() {
+    const day = activeDay;
+    const periods = timetableData[day];
+    const last = periods[periods.length - 1];
+    const [h, m] = (last?.endTime || '17:00').split(':').map(Number);
+    const newStart = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    const newEnd = `${String(h + 1).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    const newPeriod = {
+      period: periods.length + 1, subject: '', faculty: '',
+      startTime: newStart, endTime: newEnd
+    };
+    const updated = { ...timetableData };
+    updated[day] = renumber([...periods, newPeriod]);
+    setTimetableData(updated);
+  }
+
+  function openCopyModal(idx) {
+    const period = timetableData[activeDay][idx];
+    if (!period.subject) { showToast('Add a subject first', 'error'); return; }
+    setCopyModal({
+      periodIdx: idx,
+      subject: period.subject,
+      faculty: period.faculty,
+      days: DAYS.filter(d => d !== activeDay)
+    });
+  }
+
+  function toggleCopyDay(day) {
+    if (!copyModal) return;
+    const days = copyModal.days.includes(day)
+      ? copyModal.days.filter(d => d !== day)
+      : [...copyModal.days, day];
+    setCopyModal({ ...copyModal, days });
+  }
+
+  function handleCopyConfirm() {
+    if (!copyModal) return;
+    const updated = { ...timetableData };
+    const sourcePeriod = updated[activeDay][copyModal.periodIdx];
+    for (const day of copyModal.days) {
+      updated[day] = updated[day].map(p =>
+        p.period === sourcePeriod.period
+          ? { ...p, subject: copyModal.subject, faculty: copyModal.faculty }
+          : p
+      );
+    }
+    setTimetableData(updated);
+    setCopyModal(null);
+    showToast(`Copied to ${copyModal.days.length} day(s)`, 'success');
   }
 
   async function handleSaveDay() {
@@ -50,9 +146,11 @@ export default function MasterTimetable() {
     showToast(`Copied from ${day}`, 'info');
   }
 
-  async function handleClearDay() {
-    const periods = defaultTimetable[activeDay] || [];
-    const updated = { ...timetableData, [activeDay]: periods.map(p => ({ ...p, subject: '', faculty: '', classroom: '' })) };
+  function handleClearDay() {
+    const day = activeDay;
+    const periods = timetableData[day];
+    const updated = { ...timetableData };
+    updated[day] = periods.map(p => ({ ...p, subject: '', faculty: '' }));
     setTimetableData(updated);
   }
 
@@ -83,39 +181,104 @@ export default function MasterTimetable() {
       <div className="card">
         <div className="card-header">
           <span className="card-title">{activeDay}</span>
-          <div className="inline-flex">
+          <div className="inline-flex" style={{flexWrap:'wrap', gap:4}}>
             {DAYS.filter(d => d !== activeDay).map(day => (
-              <button key={day} className="btn btn-sm" onClick={() => handleCopyFrom(day)}>
-                Copy from {day.slice(0, 3)}
+              <button key={day} className="btn btn-sm" onClick={() => handleCopyFrom(day)} style={{fontSize:11, padding:'4px 8px'}}>
+                Copy {day.slice(0, 3)}
               </button>
             ))}
+            <button className="btn btn-sm btn-primary" onClick={handleAddPeriod} style={{fontSize:11, padding:'4px 8px'}}>
+              + Period
+            </button>
           </div>
         </div>
         <div className="table-container">
           <table>
             <thead>
               <tr>
-                <th>Period</th>
-                <th>Time</th>
+                <th style={{width:40}}>#</th>
+                <th style={{width:90}}>Time</th>
                 <th>Subject</th>
                 <th>Faculty</th>
-                <th>Room</th>
+                <th style={{width:180}}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {(timetableData[activeDay] || []).map((period, idx) => (
-                <tr key={period.period}>
-                  <td style={{fontSize:12, color:'var(--text-muted)', whiteSpace:'nowrap'}}>{period.period}</td>
-                  <td style={{whiteSpace:'nowrap', fontSize:12}}>{period.startTime}-{period.endTime}</td>
-                  <td><input value={period.subject} onChange={e => updatePeriod(activeDay, idx, 'subject', e.target.value)} placeholder="Subject" /></td>
-                  <td><input value={period.faculty} onChange={e => updatePeriod(activeDay, idx, 'faculty', e.target.value)} placeholder="Faculty" /></td>
-                  <td><input value={period.classroom} onChange={e => updatePeriod(activeDay, idx, 'classroom', e.target.value)} placeholder="Room" style={{width:80}} /></td>
+                <tr key={idx} style={{opacity: period.subject ? 1 : 0.5}}>
+                  <td style={{fontSize:12, color:'var(--text-muted)', textAlign:'center'}}>{idx + 1}</td>
+                  <td style={{whiteSpace:'nowrap', fontSize:12}}>
+                    <input type="time" value={period.startTime}
+                      onChange={e => updatePeriod(activeDay, idx, 'startTime', e.target.value)}
+                      style={{width:65, padding:'4px', fontSize:12}} />
+                    <span style={{margin:'0 2px', color:'var(--text-muted)'}}>-</span>
+                    <input type="time" value={period.endTime}
+                      onChange={e => updatePeriod(activeDay, idx, 'endTime', e.target.value)}
+                      style={{width:65, padding:'4px', fontSize:12}} />
+                  </td>
+                  <td>
+                    <input value={period.subject}
+                      onChange={e => updatePeriod(activeDay, idx, 'subject', e.target.value)}
+                      placeholder="Subject" style={{fontSize:13, padding:'5px 8px'}} />
+                  </td>
+                  <td>
+                    <input value={period.faculty}
+                      onChange={e => updatePeriod(activeDay, idx, 'faculty', e.target.value)}
+                      placeholder="Faculty" style={{fontSize:13, padding:'5px 8px', width:120}} />
+                  </td>
+                  <td>
+                    <div style={{display:'flex', gap:4, flexWrap:'wrap'}}>
+                      <button className="btn btn-sm" onClick={() => handleClear(idx)}
+                        style={{fontSize:10, padding:'3px 6px'}}>Clear</button>
+                      {idx < timetableData[activeDay].length - 1 && (
+                        <button className="btn btn-sm" onClick={() => handleMerge(idx)}
+                          style={{fontSize:10, padding:'3px 6px'}}>Merge</button>
+                      )}
+                      <button className="btn btn-sm" onClick={() => handleDelete(idx)}
+                        style={{fontSize:10, padding:'3px 6px', color:'var(--red)'}}>Delete</button>
+                      {period.subject && (
+                        <button className="btn btn-sm" onClick={() => openCopyModal(idx)}
+                          style={{fontSize:10, padding:'3px 6px'}}>Copy to...</button>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+
+        {!timetableData[activeDay]?.length && (
+          <div style={{textAlign:'center', padding:20}}>
+            <button className="btn btn-primary" onClick={handleAddPeriod}>Add First Period</button>
+          </div>
+        )}
       </div>
+
+      {copyModal && (
+        <div className="modal-overlay" onClick={() => setCopyModal(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h3>Copy "{copyModal.subject}" to...</h3>
+            <p style={{fontSize:13, color:'var(--text-secondary)', marginBottom:12}}>
+              Select days to copy this period's subject &amp; faculty to the same slot.
+            </p>
+            {DAYS.filter(d => d !== activeDay).map(day => (
+              <label key={day} className="checkbox-label" style={{marginBottom:8, fontSize:14}}>
+                <input type="checkbox" checked={copyModal.days.includes(day)}
+                  onChange={() => toggleCopyDay(day)} />
+                {day}
+              </label>
+            ))}
+            <div className="modal-actions">
+              <button className="btn" onClick={() => setCopyModal(null)}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleCopyConfirm}
+                disabled={copyModal.days.length === 0}>
+                Copy to {copyModal.days.length} day(s)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

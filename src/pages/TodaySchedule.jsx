@@ -68,7 +68,6 @@ export default function TodaySchedule() {
           const isModified = planned && (
             planned.subject !== period.subject ||
             planned.faculty !== period.faculty ||
-            planned.classroom !== period.classroom ||
             planned.startTime !== period.startTime
           );
 
@@ -88,8 +87,7 @@ export default function TodaySchedule() {
               </div>
               <div className="period-subject">{period.subject}</div>
               <div className="period-details">
-                {period.faculty && <span>{period.faculty} &middot; </span>}
-                {period.classroom && <span>Room {period.classroom}</span>}
+                {period.faculty && <span>{period.faculty}</span>}
               </div>
             </div>
           );

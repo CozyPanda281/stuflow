@@ -179,8 +179,7 @@ export default function Calendar() {
                       <div className="period-time">Period {p.period}: {p.startTime} - {p.endTime}</div>
                       <div className="period-subject">{p.subject}</div>
                       <div className="period-details">
-                        {p.faculty && <span>{p.faculty} &middot; </span>}
-                        {p.classroom && <span>Room {p.classroom}</span>}
+                        {p.faculty && <span>{p.faculty}</span>}
                         {att && <span className={`status-badge status-${att.status}`} style={{marginLeft:8}}>{att.status}</span>}
                         {p.status === 'cancelled' && <span className="status-badge status-cancelled" style={{marginLeft:8}}>Cancelled</span>}
                       </div>

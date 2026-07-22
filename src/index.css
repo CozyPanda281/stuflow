@@ -73,7 +73,7 @@ body {
 }
 
 .nav-tab.active { color: var(--accent); }
-.nav-tab svg { width: 22px; height: 22px; stroke-width: 2.5; }
+.nav-tab svg { width: 22px; height: 22px; }
 
 /* === CARDS === */
 .card {

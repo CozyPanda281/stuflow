@@ -1,6 +1,6 @@
 import Dexie from 'dexie';
 
-const db = new Dexie('StuFlowDB');
+const db = new Dexie('AdityaDB');
 
 db.version(1).stores({
   timetable: '++id, dayOfWeek, period',

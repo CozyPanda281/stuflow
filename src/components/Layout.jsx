@@ -26,7 +26,7 @@ export default function Layout() {
       </button>
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
-          <h1>StuFlow</h1>
+          <h1>Aditya</h1>
           <p>Academic Companion</p>
         </div>
         <nav className="sidebar-nav">

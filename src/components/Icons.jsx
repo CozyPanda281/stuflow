@@ -1,6 +1,9 @@
-const s = { stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', fill: 'none' };
+function useStroke(color) {
+  return { stroke: color || 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', fill: 'none' };
+}
 
-export function DashboardIcon(props) {
+export function DashboardIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10" {...s} />
@@ -8,7 +11,8 @@ export function DashboardIcon(props) {
   );
 }
 
-export function TimetableIcon(props) {
+export function TimetableIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <rect x="3" y="4" width="18" height="16" rx="2" {...s} />
@@ -24,7 +28,8 @@ export function TimetableIcon(props) {
   );
 }
 
-export function TodayIcon(props) {
+export function TodayIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <rect x="3" y="4" width="18" height="17" rx="2" {...s} />
@@ -37,7 +42,8 @@ export function TodayIcon(props) {
   );
 }
 
-export function AttendanceIcon(props) {
+export function AttendanceIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <path d="M14 3v4a1 1 0 001 1h4" {...s} />
@@ -47,7 +53,8 @@ export function AttendanceIcon(props) {
   );
 }
 
-export function AttendanceProofIcon(props) {
+export function AttendanceProofIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <rect x="3" y="3" width="18" height="18" rx="2" {...s} />
@@ -57,7 +64,8 @@ export function AttendanceProofIcon(props) {
   );
 }
 
-export function TasksIcon(props) {
+export function TasksIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <rect x="4" y="3" width="16" height="18" rx="2" {...s} />
@@ -67,7 +75,8 @@ export function TasksIcon(props) {
   );
 }
 
-export function LeaveIcon(props) {
+export function LeaveIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <rect x="3" y="4" width="18" height="17" rx="2" {...s} />
@@ -80,7 +89,8 @@ export function LeaveIcon(props) {
   );
 }
 
-export function NotificationsIcon(props) {
+export function NotificationsIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" {...s} />
@@ -89,7 +99,8 @@ export function NotificationsIcon(props) {
   );
 }
 
-export function CalendarIcon(props) {
+export function CalendarIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <rect x="3" y="3" width="18" height="18" rx="2" {...s} />
@@ -102,7 +113,8 @@ export function CalendarIcon(props) {
   );
 }
 
-export function NotesIcon(props) {
+export function NotesIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" {...s} />
@@ -113,7 +125,8 @@ export function NotesIcon(props) {
   );
 }
 
-export function AnalyticsIcon(props) {
+export function AnalyticsIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <rect x="4" y="15" width="4" height="5" rx="1" {...s} />
@@ -123,7 +136,8 @@ export function AnalyticsIcon(props) {
   );
 }
 
-export function SettingsIcon(props) {
+export function SettingsIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <circle cx="12" cy="12" r="3" {...s} />
@@ -139,7 +153,8 @@ export function SettingsIcon(props) {
   );
 }
 
-export function SearchIcon(props) {
+export function SearchIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <circle cx="11" cy="11" r="7" {...s} />
@@ -148,7 +163,8 @@ export function SearchIcon(props) {
   );
 }
 
-export function AddIcon(props) {
+export function AddIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <circle cx="12" cy="12" r="9" {...s} />
@@ -158,7 +174,8 @@ export function AddIcon(props) {
   );
 }
 
-export function EditIcon(props) {
+export function EditIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" {...s} />
@@ -167,7 +184,8 @@ export function EditIcon(props) {
   );
 }
 
-export function DeleteIcon(props) {
+export function DeleteIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <path d="M3 6h18" {...s} />
@@ -179,7 +197,8 @@ export function DeleteIcon(props) {
   );
 }
 
-export function SaveIcon(props) {
+export function SaveIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" {...s} />
@@ -189,7 +208,8 @@ export function SaveIcon(props) {
   );
 }
 
-export function BackIcon(props) {
+export function BackIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <line x1="20" y1="12" x2="4" y2="12" {...s} />
@@ -198,7 +218,8 @@ export function BackIcon(props) {
   );
 }
 
-export function MoreIcon(props) {
+export function MoreIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <circle cx="12" cy="12" r="1.5" {...s} />
@@ -208,7 +229,8 @@ export function MoreIcon(props) {
   );
 }
 
-export function WarningIcon(props) {
+export function WarningIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <path d="M12 2L2 21h20L12 2z" {...s} />
@@ -218,7 +240,8 @@ export function WarningIcon(props) {
   );
 }
 
-export function MoonIcon(props) {
+export function MoonIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" {...s} />
@@ -226,7 +249,8 @@ export function MoonIcon(props) {
   );
 }
 
-export function ClipboardIcon(props) {
+export function ClipboardIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <path d="M14 3v4a1 1 0 001 1h4" {...s} />
@@ -237,7 +261,8 @@ export function ClipboardIcon(props) {
   );
 }
 
-export function MemoIcon(props) {
+export function MemoIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <path d="M16 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V8l-5-5z" {...s} />
@@ -248,7 +273,8 @@ export function MemoIcon(props) {
   );
 }
 
-export function CheckSquareIcon(props) {
+export function CheckSquareIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <rect x="3" y="3" width="18" height="18" rx="2" {...s} />
@@ -257,11 +283,13 @@ export function CheckSquareIcon(props) {
   );
 }
 
-export function PriorityDot(props) {
+export function PriorityDot({ color, ...props }) {
+  const s = useStroke(color);
   return <circle cx="6" cy="6" r="3" {...s} />;
 }
 
-export function MenuIcon(props) {
+export function MenuIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <line x1="4" y1="6" x2="20" y2="6" {...s} />
@@ -271,7 +299,8 @@ export function MenuIcon(props) {
   );
 }
 
-export function CloseIcon(props) {
+export function CloseIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <line x1="6" y1="6" x2="18" y2="18" {...s} />
@@ -280,7 +309,8 @@ export function CloseIcon(props) {
   );
 }
 
-export function PlusIcon(props) {
+export function PlusIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <line x1="12" y1="5" x2="12" y2="19" {...s} />
@@ -289,7 +319,8 @@ export function PlusIcon(props) {
   );
 }
 
-export function CheckIcon(props) {
+export function CheckIcon({ color, ...props }) {
+  const s = useStroke(color);
   return (
     <svg viewBox="0 0 24 24" {...props}>
       <polyline points="4,13 9,18 20,7" {...s} />

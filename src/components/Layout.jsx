@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { DashboardIcon, TodayIcon, TimetableIcon, AttendanceIcon, TasksIcon, NotesIcon, CalendarIcon, LeaveIcon, AnalyticsIcon, MoreIcon } from './Icons';
+import { DashboardIcon, TodayIcon, AttendanceIcon, TasksIcon, MoreIcon } from './Icons';
 
 const primaryTabs = [
   { to: '/dashboard', label: 'Home', icon: DashboardIcon },

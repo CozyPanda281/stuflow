@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { DashboardIcon, TodayIcon, AttendanceIcon, TasksIcon, MoreIcon } from './Icons';
 
 const primaryTabs = [
@@ -10,10 +10,14 @@ const primaryTabs = [
 ];
 
 export default function Layout() {
+  const location = useLocation();
   return (
     <div className="app-layout">
+      <div className="ambient-bg" />
       <div className="page-wrap">
-        <Outlet />
+        <div key={location.pathname} className="page-enter">
+          <Outlet />
+        </div>
       </div>
       <nav className="bottom-nav">
         {primaryTabs.map(tab => {
@@ -25,8 +29,8 @@ export default function Layout() {
               end={tab.to === '/dashboard'}
               className={({ isActive }) => `nav-tab ${isActive ? 'active' : ''}`}
             >
-              <Icon />
-              <span>{tab.label}</span>
+              <Icon className="nav-tab-icon" />
+              <span className="nav-label">{tab.label}</span>
             </NavLink>
           );
         })}

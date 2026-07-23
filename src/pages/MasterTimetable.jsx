@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import db, { defaultTimetable, saveTimetableDay } from '../db/database';
 import { useToast } from '../App';
+import Loading from '../components/Loading';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -255,7 +256,7 @@ export default function MasterTimetable() {
     setTimetableData(updated);
   }
 
-  if (loading) return <div style={{padding:40, textAlign:'center', color:'var(--text-muted)'}}>Loading...</div>;
+  if (loading) return <Loading type="skeleton" count={5} />;
 
   return (
     <div>

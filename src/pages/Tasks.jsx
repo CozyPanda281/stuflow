@@ -97,9 +97,15 @@ export default function Tasks() {
       </div>
 
       <div className="tabs">
-        {['all', 'pending', 'completed'].map(t => (
-          <button key={t} className={`tab ${filter === t ? 'active' : ''}`} onClick={() => setFilter(t)}>
-            {t.charAt(0).toUpperCase() + t.slice(1)}
+        {[
+          { key: 'all', label: 'All', color: 'var(--accent)' },
+          { key: 'pending', label: 'Pending', color: 'var(--orange)' },
+          { key: 'completed', label: 'Done', color: 'var(--green)' },
+        ].map(t => (
+          <button key={t.key} className={`tab ${filter === t.key ? 'active' : ''}`}
+            style={filter === t.key ? { background: t.color, color:'#fff' } : {}}
+            onClick={() => setFilter(t.key)}>
+            {t.label}
           </button>
         ))}
       </div>
@@ -112,15 +118,16 @@ export default function Tasks() {
           </div>
         </div>
       ) : (
-        filtered.map(task => {
+        filtered.map((task, i) => {
           const urgency = getTaskUrgency(task);
           const colors = urgencyColors[urgency];
           return (
-            <div key={task.id} className="card" style={{
+            <div key={task.id} className="card card-enter" style={{
               marginBottom:8, cursor:'pointer', padding:'12px 14px',
               background: colors.bg || 'var(--bg-card)',
               borderLeft: `3px solid ${colors.border}`,
-              transition: 'all 0.12s'
+              transition: 'all 0.12s',
+              animationDelay: `${i * 0.04}s`
             }} onClick={() => handleToggleComplete(task)}>
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:10}}>
                 <div style={{display:'flex', alignItems:'center', gap:10, flex:1, minWidth:0}}>

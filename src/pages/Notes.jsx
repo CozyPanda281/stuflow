@@ -2,7 +2,14 @@ import { useState, useEffect } from 'react';
 import db from '../db/database';
 import { format } from 'date-fns';
 import { useToast } from '../App';
-import { MemoIcon } from '../components/Icons';
+import { MemoIcon, SearchIcon } from '../components/Icons';
+
+function subjectColor(subject) {
+  const colors = ['blue', 'green', 'orange', 'purple', 'pink'];
+  let hash = 0;
+  for (let i = 0; i < (subject || '').length; i++) hash = subject.charCodeAt(i) + ((hash << 5) - hash);
+  return colors[Math.abs(hash) % colors.length];
+}
 
 export default function Notes() {
   const [notes, setNotes] = useState([]);
@@ -67,7 +74,10 @@ export default function Notes() {
           <p>{notes.length} notes</p>
         </div>
         <div className="inline-flex">
-          <input style={{width:200}} placeholder="Search notes..." value={search} onChange={e => setSearch(e.target.value)} />
+          <div style={{position:'relative', width:180}}>
+            <SearchIcon style={{position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', width:16, height:16, stroke:'var(--text-muted)'}} />
+            <input style={{paddingLeft:32}} placeholder="Search notes..." value={search} onChange={e => setSearch(e.target.value)} />
+          </div>
           <button className="btn btn-primary" onClick={openNew}>+ New Note</button>
         </div>
       </div>
@@ -81,20 +91,30 @@ export default function Notes() {
         </div>
       ) : (
         <div className="grid-2">
-          {filtered.map(note => (
-            <div key={note.id} className="card" style={{cursor:'pointer'}} onClick={() => openEdit(note)}>
-              <div className="card-header">
-                <span className="card-title">{note.title || 'Untitled'}</span>
+          {filtered.map((note, i) => {
+            const color = subjectColor(note.subject);
+            return (
+              <div key={note.id} className="card card-enter" style={{
+                cursor:'pointer', borderLeft: `3px solid var(--${color})`,
+                animationDelay: `${i * 0.04}s`
+              }} onClick={() => openEdit(note)}>
+                <div className="card-header" style={{marginBottom:4}}>
+                  <span className="card-title" style={{fontSize:13}}>{note.title || 'Untitled'}</span>
+                </div>
+                {note.subject && (
+                  <span className={`subject-tag subject-tag-${color}`} style={{marginBottom:6}}>
+                    {note.subject}
+                  </span>
+                )}
+                <div style={{fontSize:13, color:'var(--text-secondary)', display:'-webkit-box', WebkitLineClamp:3, WebkitBoxOrient:'vertical', overflow:'hidden', lineHeight:1.5}}>
+                  {note.content || 'No content'}
+                </div>
+                <div style={{fontSize:11, color:'var(--text-muted)', marginTop:8}}>
+                  {note.createdAt}
+                </div>
               </div>
-              {note.subject && <div style={{fontSize:11, color:'var(--accent)', marginBottom:4}}>{note.subject}</div>}
-              <div style={{fontSize:13, color:'var(--text-secondary)', display:'-webkit-box', WebkitLineClamp:3, WebkitBoxOrient:'vertical', overflow:'hidden'}}>
-                {note.content || 'No content'}
-              </div>
-              <div style={{fontSize:11, color:'var(--text-muted)', marginTop:8}}>
-                {note.createdAt}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

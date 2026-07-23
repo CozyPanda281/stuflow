@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { getOrCreateDaySchedule, getActiveLeave } from '../db/database';
 import { useToast } from '../App';
 import { WarningIcon, MoonIcon } from '../components/Icons';
+import Loading from '../components/Loading';
 
 const iw = { width: 16, height: 16, stroke: 'currentColor', flexShrink: 0 };
 
@@ -29,7 +30,7 @@ export default function TodaySchedule() {
     setLoading(false);
   }
 
-  if (loading) return <div style={{padding:40, textAlign:'center', color:'var(--text-muted)'}}>Loading...</div>;
+  if (loading) return <Loading type="skeleton" count={4} />;
 
   const hasClasses = schedule?.actual?.some(p => p.subject);
 
@@ -53,7 +54,7 @@ export default function TodaySchedule() {
 
       {!hasClasses && (
         <div className="card" style={{textAlign:'center', padding:40}}>
-          <MoonIcon style={{ width: 48, height: 48, stroke: 'var(--text-muted)', strokeWidth: 1.5, marginBottom: 8 }} />
+          <MoonIcon className="float-icon" style={{ width: 48, height: 48, stroke: 'var(--text-muted)', strokeWidth: 1.5, marginBottom: 8 }} />
           <div style={{fontSize:16, fontWeight:600}}>No classes today</div>
           <div style={{fontSize:13, color:'var(--text-secondary)', marginTop:4}}>
             Enjoy your day off!
@@ -73,6 +74,7 @@ export default function TodaySchedule() {
 
           return (
             <div key={idx} className="period-card" style={{
+              animationDelay: `${idx * 0.04}s`,
               borderLeft: `3px solid ${
                 period.status === 'cancelled' ? 'var(--red)' :
                 period.status === 'self-study' ? 'var(--yellow)' :

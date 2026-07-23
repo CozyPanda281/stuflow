@@ -2,9 +2,26 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import db, { getOrCreateDaySchedule, getActiveLeave, checkAndFinalizeDay } from '../db/database';
-import { WarningIcon } from '../components/Icons';
+import { WarningIcon, CalendarIcon, TodayIcon, TasksIcon, NotesIcon } from '../components/Icons';
+import AnimatedCounter from '../components/AnimatedCounter';
 
 const iw = { width: 18, height: 18, stroke: 'currentColor', flexShrink: 0 };
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function taskUrgency(task) {
+  if (!task.dueDate) return '';
+  const diff = (new Date(task.dueDate) - new Date()) / (1000 * 60 * 60 * 24);
+  if (diff < 0) return 'urgent';
+  if (diff < 1) return 'today';
+  if (diff < 3) return 'soon';
+  return '';
+}
 
 export default function Dashboard() {
   const [todaySchedule, setTodaySchedule] = useState(null);
@@ -22,7 +39,7 @@ export default function Dashboard() {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
       checkAndFinalizeDay();
-    }, 30000);
+    }, 10000);
     return () => clearInterval(timer);
   }, []);
 
@@ -44,25 +61,28 @@ export default function Dashboard() {
     setActiveLeave(leave);
   }
 
-  const currentPeriod = todaySchedule?.actual?.find(p => {
-    const now = format(new Date(), 'HH:mm');
-    return now >= p.startTime && now <= p.endTime && p.subject;
-  });
-
-  const nextPeriod = todaySchedule?.actual?.find(p => {
-    const now = format(new Date(), 'HH:mm');
-    return now < p.startTime && p.subject;
-  });
+  const nowStr = format(currentTime, 'HH:mm');
+  const currentPeriod = todaySchedule?.actual?.find(p =>
+    nowStr >= p.startTime && nowStr <= p.endTime && p.subject
+  );
+  const nextPeriod = todaySchedule?.actual?.find(p =>
+    nowStr < p.startTime && p.subject
+  );
+  const hasClasses = todaySchedule?.actual?.some(p => p.subject);
 
   return (
     <div>
-      <div className="page-header">
-        <h2>Dashboard</h2>
-        <p>{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
+      {/* GREETING HEADER */}
+      <div className="welcome-header card-enter card-enter-d1">
+        <div className="greeting">{getGreeting()}, Aditya</div>
+        <div className="live-time">
+          {format(currentTime, 'EEEE, MMMM d, yyyy')} &middot; {format(currentTime, 'h:mm a')}
+        </div>
       </div>
 
+      {/* LEAVE BANNER */}
       {activeLeave && (
-        <div className="leave-banner">
+        <div className="leave-banner card-enter card-enter-d2">
           <WarningIcon style={iw} />
           <span>On leave: {activeLeave.reason} (until {activeLeave.endDate})</span>
           <button className="btn btn-sm btn-warning" style={{marginLeft:'auto'}} onClick={() => navigate('/leave')}>
@@ -71,107 +91,124 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* DAY FINALIZED */}
       {dayFinalized && todaySchedule && !activeLeave && (
-        <div style={{background:'rgba(34,197,94,0.15)', border:'1px solid var(--green)', borderRadius:10, padding:'8px 12px', marginBottom:16, fontSize:13, display:'flex', alignItems:'center', gap:8}}>
+        <div className="card-enter card-enter-d2" style={{
+          background: 'var(--green-glow)', border: '1px solid var(--green)',
+          borderRadius: 'var(--radius)', padding: '10px 14px', marginBottom: 14,
+          fontSize: 13, display: 'flex', alignItems: 'center', gap: 8
+        }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2.5"><polyline points="4,13 9,18 20,7"/></svg>
           Today's classes are complete. Schedule finalized.
         </div>
       )}
 
+      {/* CLASS STATUS */}
       <div className="grid-2 mb-4">
-        <div className="card">
+        <div className="card card-accent-green card-glow-green card-enter card-enter-d3" style={{cursor:'pointer'}} onClick={() => navigate('/today')}>
           <div className="card-header">
             <span className="card-title">Current Class</span>
+            {currentPeriod && <span className="class-dot live" />}
           </div>
           {currentPeriod ? (
             <div>
-              <div style={{fontSize:18, fontWeight:700}}>{currentPeriod.subject}</div>
-              <div style={{fontSize:12, color:'var(--text-secondary)'}}>
+              <div style={{fontSize:20, fontWeight:700}}>{currentPeriod.subject}</div>
+              <div style={{fontSize:13, color:'var(--text-secondary)', marginTop:2}}>
                 {currentPeriod.faculty}
               </div>
-              <div style={{fontSize:11, color:'var(--text-muted)', marginTop:4}}>
-                Period {currentPeriod.period} ({currentPeriod.startTime} - {currentPeriod.endTime})
+              <div style={{fontSize:12, color:'var(--text-muted)', marginTop:4}}>
+                Period {currentPeriod.period} &middot; {currentPeriod.startTime} - {currentPeriod.endTime}
               </div>
             </div>
           ) : nextPeriod ? (
             <div>
-              <div style={{fontSize:12, color:'var(--text-muted)'}}>Next class at {nextPeriod.startTime}</div>
-              <div style={{fontSize:16, fontWeight:600, marginTop:4}}>{nextPeriod.subject}</div>
+              <div className="class-dot upcoming" style={{marginBottom:4}} />
+              <div style={{fontSize:12, color:'var(--text-muted)'}}>Next at {nextPeriod.startTime}</div>
+              <div style={{fontSize:18, fontWeight:600, marginTop:2}}>{nextPeriod.subject}</div>
               <div style={{fontSize:12, color:'var(--text-secondary)'}}>
                 {nextPeriod.faculty}
               </div>
             </div>
+          ) : hasClasses ? (
+            <div>
+              <div className="class-dot done" style={{marginBottom:4}} />
+              <div style={{fontSize:13, color:'var(--text-muted)'}}>All classes for today are done</div>
+            </div>
           ) : (
-            <div className="empty-state" style={{padding:16}}>
-              <p>No classes scheduled right now</p>
+            <div style={{padding:'4px 0'}}>
+              <div style={{fontSize:13, color:'var(--text-muted)'}}>No classes scheduled today</div>
             </div>
           )}
-          <button className="btn btn-sm btn-primary mt-2" onClick={() => navigate('/today')}>
-            View Full Schedule
-          </button>
         </div>
 
-        <div className="card">
+        <div className="card card-accent-blue card-enter card-enter-d4" style={{cursor:'pointer'}} onClick={() => navigate('/analytics')}>
           <div className="card-header">
             <span className="card-title">Attendance</span>
-            <span className="stat-value" style={{fontSize:24}}>{stats.percentage}%</span>
+            <span style={{
+              fontSize: 28, fontWeight: 700,
+              color: stats.percentage >= 75 ? 'var(--green)' : stats.percentage >= 60 ? 'var(--yellow)' : 'var(--red)'
+            }}><AnimatedCounter value={stats.percentage} suffix="%" /></span>
           </div>
-          <div className="progress-bar mb-2">
+          <div className="progress-bar mb-2" style={{height:8}}>
             <div className="progress-fill" style={{
               width: `${stats.percentage}%`,
               background: stats.percentage >= 75 ? 'var(--green)' : stats.percentage >= 60 ? 'var(--yellow)' : 'var(--red)'
             }} />
           </div>
           <div style={{fontSize:12, color:'var(--text-secondary)', display:'flex', justifyContent:'space-between'}}>
-            <span>Present: {stats.present}</span>
-            <span>Total: {stats.total}</span>
+            <span><span style={{color:'var(--green)', fontWeight:600}}><AnimatedCounter value={stats.present} /></span> Present</span>
+            <span><span style={{color:'var(--red)', fontWeight:600}}><AnimatedCounter value={stats.absent} /></span> Absent</span>
+            <span><span style={{fontWeight:600}}><AnimatedCounter value={stats.total} /></span> Total</span>
           </div>
         </div>
       </div>
 
-      <div className="grid-2 mb-4">
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">Quick Actions</span>
-          </div>
-          <div className="inline-flex">
-            <button className="btn btn-sm" onClick={() => navigate('/today/edit')}>
-              Edit Today
-            </button>
-            <button className="btn btn-sm" onClick={() => navigate('/attendance')}>
-              Mark Attendance
-            </button>
-            <button className="btn btn-sm" onClick={() => navigate('/tasks')}>
-              Add Task
-            </button>
-            <button className="btn btn-sm" onClick={() => navigate('/notes')}>
-              New Note
-            </button>
-          </div>
+      {/* QUICK ACTIONS */}
+      <div className="card card-enter card-enter-d5" style={{marginBottom:14}}>
+        <div className="card-header">
+          <span className="card-title">Quick Actions</span>
         </div>
+        <div className="action-grid">
+          <button className="action-btn action-btn-blue" onClick={() => navigate('/today/edit')}>
+            <TodayIcon />
+            Edit Today
+          </button>
+          <button className="action-btn action-btn-green" onClick={() => navigate('/attendance')}>
+            <CalendarIcon />
+            Attendance
+          </button>
+          <button className="action-btn action-btn-orange" onClick={() => navigate('/tasks')}>
+            <TasksIcon />
+            Tasks
+          </button>
+          <button className="action-btn action-btn-purple" onClick={() => navigate('/notes')}>
+            <NotesIcon />
+            Notes
+          </button>
+        </div>
+      </div>
 
-        <div className="card">
+      {/* PENDING TASKS */}
+      {pendingTasks.length > 0 && (
+        <div className="card card-enter card-enter-d6">
           <div className="card-header">
             <span className="card-title">Pending Tasks</span>
-            <span style={{fontSize:12, color:'var(--text-muted)'}}>{pendingTasks.length}</span>
+            <span style={{fontSize:12, color:'var(--text-muted)'}}>{pendingTasks.length} remaining</span>
           </div>
-          {pendingTasks.length === 0 ? (
-            <div style={{fontSize:12, color:'var(--text-muted)'}}>No pending tasks</div>
-          ) : (
-            pendingTasks.map(task => (
-              <div key={task.id} style={{
-                display:'flex', justifyContent:'space-between',
-                padding:'6px 0', borderBottom:'1px solid var(--border)', fontSize:13
-              }}>
-                <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>{task.title}</span>
+          {pendingTasks.map(task => {
+            const urgency = taskUrgency(task);
+            return (
+              <div key={task.id} className={`task-item task-item-${urgency || 'done'}`}
+                onClick={() => navigate('/tasks')}>
+                <span style={{fontWeight:500, fontSize:13}}>{task.title}</span>
                 <span style={{fontSize:11, color:'var(--text-muted)'}}>
                   {task.dueDate ? format(parseISO(task.dueDate), 'MMM d') : ''}
                 </span>
               </div>
-            ))
-          )}
+            );
+          })}
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import MasterTimetable from './pages/MasterTimetable';
@@ -12,6 +12,7 @@ import Calendar from './pages/Calendar';
 import Analytics from './pages/Analytics';
 import Leave from './pages/Leave';
 import More from './pages/More';
+import SplashScreen from './components/SplashScreen';
 import { getActiveLeave } from './db/database';
 import { startNotificationService, stopNotificationService } from './utils/notifications';
 
@@ -36,6 +37,14 @@ export const APP_VERSION = '1.0.2';
 export default function App() {
   const [toasts, setToasts] = useState([]);
   const [activeLeave, setActiveLeave] = useState(null);
+  const [splashDone, setSplashDone] = useState(
+    () => sessionStorage.getItem('splash-seen') === 'true'
+  );
+
+  const handleSplashFinish = useCallback(() => {
+    sessionStorage.setItem('splash-seen', 'true');
+    setSplashDone(true);
+  }, []);
 
   const showToast = (message, type = 'info') => {
     const id = Date.now();
@@ -52,7 +61,9 @@ export default function App() {
   }, []);
 
   return (
-    <ToastContext.Provider value={{ showToast, activeLeave, setActiveLeave }}>
+    <>
+      {!splashDone && <SplashScreen onFinish={handleSplashFinish} />}
+      <ToastContext.Provider value={{ showToast, activeLeave, setActiveLeave }}>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
@@ -71,5 +82,6 @@ export default function App() {
       </Routes>
       <ToastContainer toasts={toasts} />
     </ToastContext.Provider>
+    </>
   );
 }

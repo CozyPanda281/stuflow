@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import db from '../db/database';
+import AnimatedCounter from '../components/AnimatedCounter';
 
 export default function Analytics() {
   const [stats, setStats] = useState({
@@ -62,11 +63,11 @@ export default function Analytics() {
       </div>
 
       <div className="grid-2 mb-4">
-        <div className="card">
+        <div className="card card-enter card-enter-d1">
           <div className="card-header"><span className="card-title">Attendance Overview</span></div>
           <div style={{textAlign:'center', padding:12}}>
             <div style={{fontSize:48, fontWeight:700, color: percentage >= 75 ? 'var(--green)' : percentage >= 60 ? 'var(--yellow)' : 'var(--red)'}}>
-              {percentage}%
+              <AnimatedCounter value={percentage} suffix="%" duration={800} />
             </div>
             <div style={{fontSize:13, color:'var(--text-secondary)'}}>Overall Attendance</div>
           </div>
@@ -77,18 +78,18 @@ export default function Analytics() {
             }} />
           </div>
           <div style={{display:'flex', justifyContent:'space-around', marginTop:12, fontSize:13}}>
-            <div><span style={{color:'var(--green)', fontWeight:600}}>{stats.present}</span> Present</div>
-            <div><span style={{color:'var(--red)', fontWeight:600}}>{stats.absent}</span> Absent</div>
-            <div><span style={{color:'var(--yellow)', fontWeight:600}}>{stats.late}</span> Late</div>
-            <div><span style={{color:'var(--orange)', fontWeight:600}}>{stats.onLeave}</span> Leave</div>
+            <div><span style={{color:'var(--green)', fontWeight:600}}><AnimatedCounter value={stats.present} /></span> Present</div>
+            <div><span style={{color:'var(--red)', fontWeight:600}}><AnimatedCounter value={stats.absent} /></span> Absent</div>
+            <div><span style={{color:'var(--yellow)', fontWeight:600}}><AnimatedCounter value={stats.late} /></span> Late</div>
+            <div><span style={{color:'var(--orange)', fontWeight:600}}><AnimatedCounter value={stats.onLeave} /></span> Leave</div>
           </div>
         </div>
 
-        <div className="card">
+        <div className="card card-enter card-enter-d2">
           <div className="card-header"><span className="card-title">Tasks</span></div>
           <div style={{textAlign:'center', padding:12}}>
             <div style={{fontSize:48, fontWeight:700, color: taskPercent >= 70 ? 'var(--green)' : 'var(--yellow)'}}>
-              {taskPercent}%
+              <AnimatedCounter value={taskPercent} suffix="%" duration={800} />
             </div>
             <div style={{fontSize:13, color:'var(--text-secondary)'}}>Tasks Completed</div>
           </div>
@@ -99,9 +100,9 @@ export default function Analytics() {
             }} />
           </div>
           <div style={{display:'flex', justifyContent:'space-around', marginTop:12, fontSize:13}}>
-            <div><span style={{fontWeight:600}}>{stats.taskCompletion.completed}</span> Done</div>
-            <div><span style={{fontWeight:600}}>{stats.taskCompletion.total - stats.taskCompletion.completed}</span> Pending</div>
-            <div><span style={{fontWeight:600}}>{stats.taskCompletion.total}</span> Total</div>
+            <div><span style={{fontWeight:600}}><AnimatedCounter value={stats.taskCompletion.completed} /></span> Done</div>
+            <div><span style={{fontWeight:600}}><AnimatedCounter value={stats.taskCompletion.total - stats.taskCompletion.completed} /></span> Pending</div>
+            <div><span style={{fontWeight:600}}><AnimatedCounter value={stats.taskCompletion.total} /></span> Total</div>
           </div>
         </div>
       </div>
@@ -118,7 +119,7 @@ export default function Analytics() {
                 <div key={subject} style={{marginBottom:12}}>
                   <div style={{display:'flex', justifyContent:'space-between', fontSize:13, marginBottom:4}}>
                     <span style={{fontWeight:500}}>{subject}</span>
-                    <span style={{color: subPct >= 75 ? 'var(--green)' : 'var(--red)'}}>{subPct}%</span>
+                    <span style={{color: subPct >= 75 ? 'var(--green)' : 'var(--red)'}}><AnimatedCounter value={subPct} suffix="%" /></span>
                   </div>
                   <div className="progress-bar">
                     <div className="progress-fill" style={{
@@ -143,16 +144,18 @@ export default function Analytics() {
             const maxVal = Math.max(...stats.weeklyData.map(d => d.total), 1);
             const height = day.total ? Math.max((day.total / maxVal) * 100, 20) : 10;
             return (
-              <div key={day.date} style={{flex:1, display:'flex', flexDirection:'column', alignItems:'center', height:'100%', justifyContent:'flex-end'}}>
-                <div style={{fontSize:10, color:'var(--text-muted)', marginBottom:2}}>{day.present}/{day.total}</div>
-                <div style={{
-                  width:'100%', maxWidth:30,
-                  height: `${height}%`,
-                  background: day.absent > 0 ? 'var(--red)' : day.total > 0 ? 'var(--green)' : 'var(--text-muted)',
-                  borderRadius: '4px 4px 0 0',
-                  opacity: 0.7,
-                  minHeight: 8
-                }} />
+                <div key={day.date} style={{flex:1, display:'flex', flexDirection:'column', alignItems:'center', height:'100%', justifyContent:'flex-end', animation: 'fadeInUp 0.4s ease both', animationDelay: `${i * 0.06}s`}}>
+                  <div style={{fontSize:10, color:'var(--text-muted)', marginBottom:2}}>{day.present}/{day.total}</div>
+                  <div style={{
+                    width:'100%', maxWidth:30,
+                    height: `${height}%`,
+                    background: day.absent > 0 ? 'var(--red)' : day.total > 0 ? 'var(--green)' : 'var(--text-muted)',
+                    borderRadius: '4px 4px 0 0',
+                    opacity: 0.7,
+                    minHeight: 8,
+                    animation: 'barGrow 0.5s ease both',
+                    animationDelay: `${i * 0.06}s`
+                  }} />
                 <div style={{fontSize:10, color:'var(--text-muted)', marginTop:4}}>
                   {day.date.slice(5)}
                 </div>

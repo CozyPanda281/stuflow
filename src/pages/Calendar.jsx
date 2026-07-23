@@ -123,23 +123,28 @@ export default function Calendar() {
             <div key={d} style={{fontSize:11, color:'var(--text-muted)', padding:'4px 0', fontWeight:600}}>{d}</div>
           ))}
           {Array.from({ length: startPad }).map((_, i) => <div key={`pad-${i}`} />)}
-          {days.map(day => {
+          {days.map((day, i) => {
             const dateStr = format(day, 'yyyy-MM-dd');
             const color = getDayColor(dateStr);
             const today = isSameDay(day, new Date());
             const selected = selectedDate && isSameDay(day, selectedDate);
+            const todayStyle = today && !selected ? { borderColor: 'var(--accent)', borderWidth:2 } : {};
             return (
               <div key={dateStr} onClick={() => openDay(day)}
                 style={{
                   padding:'8px 4px', borderRadius:8, cursor:'pointer',
                   fontSize:13, fontWeight: today ? 700 : 400,
-                  background: selected ? 'var(--accent)' : today ? 'var(--bg-hover)' : 'transparent',
-                  color: color || (selected ? 'white' : 'var(--text-primary)'),
+                  background: selected ? 'var(--accent)' : today ? 'var(--accent-glow)' : 'transparent',
+                  color: color || (selected ? 'white' : today ? 'var(--accent)' : 'var(--text)'),
                   border: '1px solid transparent',
-                  borderColor: color ? `${color}44` : 'transparent',
-                  transition: 'all 0.1s',
-                  position:'relative'
-                }}>
+                  borderColor: color ? `${color}55` : today ? 'var(--accent)' : 'transparent',
+                  transition: 'all 0.15s var(--ease-smooth)',
+                  position:'relative',
+                  animation: `fadeInUp 0.3s var(--ease-smooth) both`,
+                  animationDelay: `${i * 0.008}s`
+                }}
+                onMouseEnter={e => { if (!selected) e.currentTarget.style.background = 'var(--bg-hover)'; }}
+                onMouseLeave={e => { if (!selected) e.currentTarget.style.background = today && !selected ? 'var(--accent-glow)' : 'transparent'; }}>
                 {format(day, 'd')}
                 {hasModifications(dateStr) && (
                   <span style={{

@@ -4,6 +4,7 @@ import db, { getOrCreateDaySchedule } from '../db/database';
 import { useToast } from '../App';
 import { ClipboardIcon } from '../components/Icons';
 import { addWatermark } from '../utils/watermark';
+import AnimatedCounter from '../components/AnimatedCounter';
 
 export default function Attendance() {
   const [records, setRecords] = useState([]);
@@ -14,7 +15,6 @@ export default function Attendance() {
   const [watermarking, setWatermarking] = useState(false);
   const [viewProof, setViewProof] = useState(null);
   const cameraRef = useRef();
-  const galleryRef = useRef();
   const { showToast } = useToast();
   const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -47,7 +47,7 @@ export default function Attendance() {
     const reader = new FileReader();
     reader.onload = async (ev) => {
       try {
-        const watermarked = await addWatermark(ev.target.result, today);
+        const watermarked = await addWatermark(ev.target.result, today, editRecord?.subject, editRecord?.period);
         setProofImage(watermarked);
       } catch {
         setProofImage(ev.target.result);
@@ -59,10 +59,6 @@ export default function Attendance() {
 
   function handleCamera() {
     cameraRef.current?.click();
-  }
-
-  function handleGallery() {
-    galleryRef.current?.click();
   }
 
   async function handleSaveAttendance() {
@@ -107,20 +103,20 @@ export default function Attendance() {
       </div>
 
       <div className="grid-4 mb-4">
-        <div className="stat-card">
-          <div className="stat-value" style={{color:'var(--green)'}}>{stats.present}</div>
+        <div className="stat-card card-enter-d1">
+          <div className="stat-value" style={{color:'var(--green)'}}><AnimatedCounter value={stats.present} /></div>
           <div className="stat-label">Present</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value" style={{color:'var(--red)'}}>{stats.absent}</div>
+        <div className="stat-card card-enter-d2">
+          <div className="stat-value" style={{color:'var(--red)'}}><AnimatedCounter value={stats.absent} /></div>
           <div className="stat-label">Absent</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value" style={{color:'var(--accent)'}}>{stats.percentage}%</div>
+        <div className="stat-card card-enter-d3">
+          <div className="stat-value" style={{color:'var(--accent)'}}><AnimatedCounter value={stats.percentage} suffix="%" /></div>
           <div className="stat-label">Percentage</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{stats.total}</div>
+        <div className="stat-card card-enter-d4">
+          <div className="stat-value"><AnimatedCounter value={stats.total} /></div>
           <div className="stat-label">Total</div>
         </div>
       </div>
@@ -226,19 +222,14 @@ export default function Attendance() {
                 <button className="btn btn-sm btn-primary" onClick={handleCamera}>
                   &#128247; Take Photo
                 </button>
-                <button className="btn btn-sm" onClick={handleGallery}>
-                  Choose from Gallery
-                </button>
               </div>
               <input type="file" ref={cameraRef} accept="image/*" capture="environment"
-                onChange={e => handleImageCapture(e.target.files[0])} style={{display:'none'}} />
-              <input type="file" ref={galleryRef} accept="image/*"
                 onChange={e => handleImageCapture(e.target.files[0])} style={{display:'none'}} />
               {watermarking && <div style={{fontSize:12, color:'var(--text-muted)', padding:'8px 0'}}>Adding watermark...</div>}
               {proofImage && (
                 <div style={{position:'relative'}}>
                   <img src={proofImage} style={{width:'100%', borderRadius:'var(--radius-sm)', marginTop:4}} />
-                  <div style={{fontSize:11, color:'var(--green)', marginTop:4}}>&#10003; Watermark applied (date &amp; time)</div>
+                  <div style={{fontSize:11, color:'var(--green)', marginTop:4}}>&#10003; Verification watermark applied</div>
                 </div>
               )}
               {editRecord?.proofImage && !proofImage && !watermarking && (

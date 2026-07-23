@@ -5,6 +5,7 @@ import { getOrCreateDaySchedule, markDayAsHoliday } from '../db/database';
 import db from '../db/database';
 import { useToast } from '../App';
 import { PlusIcon } from '../components/Icons';
+import Loading from '../components/Loading';
 
 const ip = { width: 14, height: 14, stroke: 'currentColor', strokeWidth: 2.5 };
 
@@ -174,7 +175,7 @@ export default function LiveDayEditor() {
     showToast('Today marked as holiday', 'success');
   }
 
-  if (loading) return <div style={{padding:40, textAlign:'center', color:'var(--text-muted)'}}>Loading...</div>;
+  if (loading) return <Loading type="skeleton" count={4} />;
   if (schedule?.isHoliday) {
     return (
       <div>
@@ -231,6 +232,7 @@ export default function LiveDayEditor() {
 
           return (
             <div key={period.period} className="period-card" style={{
+              animationDelay: `${idx * 0.04}s`,
               borderLeft: `3px solid ${
                 period.status === 'cancelled' ? 'var(--red)' :
                 period.status === 'self-study' ? 'var(--yellow)' :

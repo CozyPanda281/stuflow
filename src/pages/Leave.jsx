@@ -118,20 +118,27 @@ export default function Leave() {
           </div>
         </div>
       ) : (
-        leaves.map(leave => {
+        leaves.map((leave, i) => {
           const today = new Date();
           const start = new Date(leave.startDate + 'T00:00:00');
           const end = new Date(leave.endDate + 'T00:00:00');
           const isActive = leave.active && today >= start && today <= end;
           const isUpcoming = today < start;
+          const accentColor = isActive ? 'var(--orange)' : isUpcoming ? 'var(--yellow)' : 'var(--text-muted)';
+          const glowColor = isActive ? 'var(--orange-glow)' : isUpcoming ? 'var(--yellow-glow)' : 'transparent';
 
           return (
-            <div key={leave.id} className="card" style={{marginBottom:8, cursor:'pointer',
-              borderLeft: `3px solid ${isActive ? 'var(--orange)' : isUpcoming ? 'var(--yellow)' : 'var(--text-muted)'}`
+            <div key={leave.id} className="card card-enter" style={{
+              marginBottom:8, cursor:'pointer',
+              borderLeft: `3px solid ${accentColor}`,
+              boxShadow: isActive ? `0 0 20px ${glowColor}, var(--shadow)` : 'var(--shadow)',
+              animationDelay: `${i * 0.05}s`
             }} onClick={() => openEdit(leave)}>
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
                 <div>
-                  <div style={{fontSize:14, fontWeight:600}}>{leave.reason}</div>
+                  <div style={{fontSize:14, fontWeight:600, color: isActive ? 'var(--orange)' : isUpcoming ? 'var(--yellow)' : 'var(--text)'}}>
+                    {leave.reason}
+                  </div>
                   <div style={{fontSize:12, color:'var(--text-secondary)', marginTop:4}}>
                     {format(parseISO(leave.startDate), 'MMM d, yyyy')} - {format(parseISO(leave.endDate), 'MMM d, yyyy')}
                   </div>

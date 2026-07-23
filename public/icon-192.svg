@@ -1,18 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="192" height="192">
   <defs>
-    <radialGradient id="bg" cx="50%" cy="50%" r="55%">
-      <stop offset="0%" stop-color="#1a2a5c"/>
-      <stop offset="100%" stop-color="#0d1b3e"/>
-    </radialGradient>
-    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.3"/>
-    </filter>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5b8dff"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
   </defs>
-  <rect width="192" height="192" rx="42" fill="url(#bg)"/>
-  <g filter="url(#shadow)">
-    <path d="M60 148 C76 106, 92 60, 96 48 C100 60, 116 106, 132 148"
-          fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M64 108 C80 100, 112 100, 128 108"
-          fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round"/>
-  </g>
+  <path d="M 50 10 C 24 18, 8 50, 16 84" stroke="url(#g)" stroke-width="9" stroke-linecap="round" fill="none"/>
+  <path d="M 50 10 C 76 18, 92 50, 84 84" stroke="url(#g)" stroke-width="9" stroke-linecap="round" fill="none"/>
+  <path d="M 44 26 C 34 32, 24 52, 28 80" stroke="url(#g)" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M 56 26 C 66 32, 76 52, 72 80" stroke="url(#g)" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M 20 52 Q 50 46, 80 52" stroke="url(#g)" stroke-width="5.5" stroke-linecap="round" fill="none"/>
 </svg>

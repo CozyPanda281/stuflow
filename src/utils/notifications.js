@@ -41,7 +41,8 @@ export async function checkUpcomingClasses() {
       const diffMs = classTime.getTime() - now.getTime();
       const diffMin = Math.round(diffMs / 60000);
 
-      if (diffMin > 0 && diffMin <= 10) {
+      lastNotified = {};
+      if (diffMin > 0 && diffMin <= 99999) {
         const todayFormatted = format(new Date(), 'EEEE, MMM d');
         showNotification(
           `${period.subject} at ${period.startTime}`,

@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import db, { getOrCreateDaySchedule } from '../db/database';
 import { useToast } from '../App';
 import { ClipboardIcon } from '../components/Icons';
-import { addWatermark } from '../utils/watermark';
+import { addWatermark, saveImageToGallery } from '../utils/watermark';
 import AnimatedCounter from '../components/AnimatedCounter';
 
 export default function Attendance() {
@@ -63,13 +63,21 @@ export default function Attendance() {
 
   async function handleSaveAttendance() {
     if (!editRecord) return;
-    const data = { ...editRecord, proofImage: proofImage || editRecord.proofImage };
+    const finalImage = proofImage || editRecord.proofImage;
+    const data = { ...editRecord, proofImage: finalImage };
     if (editRecord.id) {
       await db.attendance.update(editRecord.id, data);
       showToast('Attendance updated', 'success');
     } else {
       await db.attendance.add(data);
       showToast('Attendance marked', 'success');
+    }
+    if (finalImage) {
+      saveImageToGallery(finalImage, data.subject, data.date)
+        .then((r) => {
+          if (r.method === 'filesystem') showToast('Photo saved to StuFlow album', 'success');
+        })
+        .catch(() => {});
     }
     setShowModal(false);
     setEditRecord(null);

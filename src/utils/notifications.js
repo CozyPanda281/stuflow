@@ -51,8 +51,7 @@ export async function checkUpcomingClasses() {
       .filter(p => p.diffMin > 0)
       .sort((a, b) => a.diffMin - b.diffMin)[0];
 
-    lastNotified = {};
-    if (upcoming && upcoming.diffMin <= 99999 && !lastNotified[`class_${upcoming.period}`]) {
+    if (upcoming && upcoming.diffMin <= 10 && !lastNotified[`class_${upcoming.period}`]) {
       const todayFormatted = format(new Date(), 'EEEE, MMM d');
       showNotification(
         `${upcoming.subject} at ${upcoming.startTime}`,
@@ -96,15 +95,12 @@ export async function checkUpcomingTasks() {
 }
 
 export async function startNotificationService() {
-  const granted = await requestPermission();
+  await requestPermission();
   if (notificationInterval) clearInterval(notificationInterval);
   notificationInterval = setInterval(() => {
     checkUpcomingClasses();
     checkUpcomingTasks();
   }, 30000);
-  if (granted) {
-    showNotification('Aditya', 'Notifications are working ✓');
-  }
   checkUpcomingClasses();
   checkUpcomingTasks();
 }

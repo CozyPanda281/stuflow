@@ -75,7 +75,7 @@ export default function Attendance() {
     if (finalImage) {
       saveImageToGallery(finalImage, data.subject, data.date)
         .then((r) => {
-          if (r.method === 'filesystem') showToast('Photo saved to StuFlow album', 'success');
+          if (r.method === 'filesystem') showToast('Photo saved to Aditya album', 'success');
         })
         .catch(() => {});
     }

@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'favicon.png', 'icon-192.png', 'icon-512.png'],
       manifest: {
-        name: 'StuFlow',
-        short_name: 'StuFlow',
+        name: 'Aditya',
+        short_name: 'Aditya',
         description: 'Attendance Management',
         theme_color: '#0f0f1a',
         background_color: '#0f0f1a',

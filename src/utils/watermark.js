@@ -122,7 +122,7 @@ export async function saveImageToGallery(dataUrl, subject = 'attendance', dateSt
   // Try File System Access API (Chromium) — lets user pick/create a folder
   try {
     if ('showDirectoryPicker' in window) {
-      let dirHandle = sessionStorage.getItem('stuflow-dir-handle');
+      let dirHandle = sessionStorage.getItem('aditya-dir-handle');
       let directory;
 
       if (dirHandle) {
@@ -132,7 +132,7 @@ export async function saveImageToGallery(dataUrl, subject = 'attendance', dateSt
           const all = await navigator.storage.getDirectory();
           directory = await all.getDirectoryHandle(id);
         } catch {
-          sessionStorage.removeItem('stuflow-dir-handle');
+          sessionStorage.removeItem('aditya-dir-handle');
         }
       }
 
@@ -149,7 +149,7 @@ export async function saveImageToGallery(dataUrl, subject = 'attendance', dateSt
 
       let stuflowDir;
       try {
-        stuflowDir = await directory.getDirectoryHandle('StuFlow', { create: true });
+        stuflowDir = await directory.getDirectoryHandle('Aditya', { create: true });
       } catch {
         stuflowDir = directory;
       }
@@ -164,7 +164,7 @@ export async function saveImageToGallery(dataUrl, subject = 'attendance', dateSt
         const all = await navigator.storage.getDirectory();
         const id = `stuflow-${Date.now()}`;
         await all.getDirectoryHandle(id, { create: true });
-        sessionStorage.setItem('stuflow-dir-handle', JSON.stringify({ id }));
+        sessionStorage.setItem('aditya-dir-handle', JSON.stringify({ id }));
       } catch {}
 
       return { success: true, method: 'filesystem', filename };

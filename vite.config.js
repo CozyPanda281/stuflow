@@ -6,8 +6,11 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'favicon.png', 'icon-192.png', 'icon-512.png'],
+      includeAssets: ['favicon.svg', 'favicon.png', 'icon-192.png', 'icon-512.png', 'badge.png'],
       manifest: {
         name: 'Aditya',
         short_name: 'Aditya',
@@ -21,7 +24,7 @@ export default defineConfig({
           { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
         ],
       },
-      workbox: {
+      injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
       },
     }),

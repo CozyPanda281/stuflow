@@ -18,7 +18,14 @@ export async function showNotification(title, body) {
   if (Notification.permission !== 'granted') return;
   try {
     const reg = await navigator.serviceWorker.ready;
-    reg.showNotification(title, { body, icon: '/icon-192.png', vibrate: [200, 100, 200] });
+    reg.showNotification(title, {
+      body,
+      icon: '/icon-192.png',
+      badge: '/badge.png',
+      vibrate: [400, 50, 200, 100, 600, 50, 500],
+      tag: 'upcoming-class',
+      requireInteraction: true,
+    });
   } catch {}
 }
 

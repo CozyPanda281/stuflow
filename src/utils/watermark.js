@@ -18,14 +18,12 @@ export function addWatermark(imageDataUrl, dateStr, subject = 'â€”', period = 'â
       canvas.height = h;
       ctx.drawImage(img, 0, 0, w, h);
 
-      const size = Math.round(Math.min(w, h) * 0.32);
+      const size = Math.round(Math.min(w, h) * 0.30);
       const radius = size / 2;
       const margin = Math.max(14, Math.round(w * 0.03));
       const cx = w - size / 2 - margin;
       const cy = h - size / 2 - margin;
-      const tilt = -7;
-      const rad = tilt * Math.PI / 180;
-      const s = size / 320;
+      const s = size / 300;
 
       const d = new Date(dateStr + 'T00:00:00');
       const dateValue = format(d, 'dd MMM yyyy');
@@ -39,123 +37,121 @@ export function addWatermark(imageDataUrl, dateStr, subject = 'â€”', period = 'â
         { label: 'Period', value: periodValue },
       ];
 
-      const titleSize = Math.round(16 * s);
+      const blue = 'rgba(91, 141, 255, 0.55)';
+      const darkBlue = 'rgba(91, 141, 255, 0.75)';
+      const textClr = 'rgba(255,255,255,0.92)';
+      const mutedClr = 'rgba(255,255,255,0.50)';
+      const borderClr = 'rgba(91, 141, 255, 0.40)';
+
+      const titleSize = Math.round(17 * s);
       const metaSize = Math.round(10 * s);
-      const checkSize = Math.round(32 * s);
-      const lineH = Math.round(metaSize * 1.65);
-      const lw = Math.max(1.5, Math.round(2 * s));
-      const innerPad = Math.round(22 * s);
-      const topSectionH = Math.round(38 * s);
-      const checkAreaH = Math.round(36 * s);
-      const metaAreaTop = innerPad + topSectionH + checkAreaH;
-      const metaAreaH = metaItems.length * lineH;
-      const totalH = metaAreaTop + metaAreaH + Math.round(16 * s);
+      const checkSize = Math.round(34 * s);
+      const lineH = Math.round(metaSize * 1.7);
+      const lw = Math.max(2, Math.round(2.2 * s));
+      const innerPad = Math.round(20 * s);
 
       ctx.save();
       ctx.translate(cx, cy);
-      ctx.rotate(rad);
 
       // --- Shadow ---
       ctx.save();
-      ctx.shadowColor = 'rgba(0,0,0,0.35)';
-      ctx.shadowBlur = Math.round(16 * s);
+      ctx.shadowColor = 'rgba(0,0,0,0.30)';
+      ctx.shadowBlur = Math.round(14 * s);
       ctx.shadowOffsetX = Math.round(2 * s);
-      ctx.shadowOffsetY = Math.round(4 * s);
+      ctx.shadowOffsetY = Math.round(3 * s);
       ctx.beginPath();
       ctx.arc(0, 0, radius, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(0,0,0,0.01)';
       ctx.fill();
       ctx.restore();
 
-      // --- Frosted glass fill ---
+      // --- Frosted glass fill with blue tint ---
       const bx = Math.round(cx - radius);
       const by = Math.round(cy - radius);
       const bsize = Math.round(size);
       const region = ctx.getImageData(bx, by, bsize, bsize);
-      const blurred = boxBlur(ctx, region, Math.round(8 * s));
+      const blurred = boxBlur(ctx, region, Math.round(10 * s));
       ctx.putImageData(blurred, bx, by);
 
       ctx.save();
       ctx.beginPath();
       ctx.arc(0, 0, radius, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,0.12)';
+      const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
+      grad.addColorStop(0, 'rgba(91, 141, 255, 0.08)');
+      grad.addColorStop(0.7, 'rgba(91, 141, 255, 0.12)');
+      grad.addColorStop(1, 'rgba(167, 139, 250, 0.18)');
+      ctx.fillStyle = grad;
       ctx.fill();
       ctx.restore();
 
-      // --- Outer circle border ---
+      // --- Outer border ring ---
       ctx.save();
       ctx.beginPath();
-      ctx.arc(0, 0, radius - lw * 0.5, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(255,255,255,0.40)';
+      ctx.arc(0, 0, radius - 1, 0, Math.PI * 2);
+      ctx.strokeStyle = borderClr;
       ctx.lineWidth = lw;
       ctx.stroke();
       ctx.restore();
 
-      // --- Inner circle border ---
+      // --- Inner border ring ---
       ctx.save();
       ctx.beginPath();
-      ctx.arc(0, 0, radius - lw * 0.5 - Math.round(6 * s), 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(255,255,255,0.20)';
+      ctx.arc(0, 0, radius - lw - Math.round(5 * s), 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(91, 141, 255, 0.20)';
       ctx.lineWidth = Math.max(0.5, Math.round(0.8 * s));
       ctx.stroke();
       ctx.restore();
 
-      // --- Decorative dots around inner circle ---
-      const dotRadius = Math.max(1.5, Math.round(1.5 * s));
-      const dotCount = 24;
-      const dotCircleR = radius - lw * 0.5 - Math.round(4 * s);
+      // --- Dot ring ---
+      const dotR = Math.max(1.2, Math.round(1.2 * s));
+      const dotCount = 28;
+      const dotCircleR = radius - lw - Math.round(3 * s);
       ctx.save();
-      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.fillStyle = 'rgba(91, 141, 255, 0.25)';
       for (let i = 0; i < dotCount; i++) {
         const angle = (i / dotCount) * Math.PI * 2;
-        const dx = Math.cos(angle) * dotCircleR;
-        const dy = Math.sin(angle) * dotCircleR;
         ctx.beginPath();
-        ctx.arc(dx, dy, dotRadius, 0, Math.PI * 2);
+        ctx.arc(Math.cos(angle) * dotCircleR, Math.sin(angle) * dotCircleR, dotR, 0, Math.PI * 2);
         ctx.fill();
       }
       ctx.restore();
 
-      // --- Top section: "CERTIFIED" with star ---
-      const topY = -radius + innerPad;
+      // --- Header ---
+      const headerY = -radius + innerPad + Math.round(10 * s);
       ctx.save();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      // Star
-      const starSize = Math.round(11 * s);
-      drawStar(ctx, 0, topY, starSize);
+      ctx.font = `800 ${titleSize}px -apple-system, system-ui, sans-serif`;
+      ctx.fillStyle = textClr;
+      ctx.fillText('CERTIFIED', 0, headerY);
+
+      ctx.font = `600 ${Math.round(9 * s)}px -apple-system, system-ui, sans-serif`;
+      ctx.fillStyle = mutedClr;
+      ctx.fillText('ATTENDANCE PROOF', 0, headerY + Math.round(16 * s));
+
       ctx.restore();
 
-      // CERTIFIED text
-      ctx.save();
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.font = `700 ${titleSize}px -apple-system, system-ui, sans-serif`;
-      ctx.fillStyle = 'rgba(255,255,255,0.92)';
-      ctx.fillText('CERTIFIED', 0, topY + Math.round(22 * s));
-      ctx.restore();
-
-      // Divider line
-      const dividerY = topY + Math.round(34 * s);
+      // --- Divider ---
+      const divY = headerY + Math.round(26 * s);
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(-Math.round(50 * s), dividerY);
-      ctx.lineTo(Math.round(50 * s), dividerY);
-      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.moveTo(-Math.round(55 * s), divY);
+      ctx.lineTo(Math.round(55 * s), divY);
+      ctx.strokeStyle = 'rgba(91, 141, 255, 0.20)';
       ctx.lineWidth = Math.max(0.5, Math.round(0.8 * s));
       ctx.stroke();
       ctx.restore();
 
-      // --- Center checkmark ---
-      const checkY = dividerY + Math.round(6 * s) + checkSize / 2;
+      // --- Checkmark ---
+      const checkY = divY + Math.round(10 * s) + checkSize / 2;
       ctx.save();
       ctx.translate(0, checkY);
-      drawCheckCircleStamp(ctx, checkSize, s);
+      drawCheckCircleStamp(ctx, checkSize, s, blue, darkBlue);
       ctx.restore();
 
-      // --- Metadata rows ---
-      const metaStartY = metaAreaTop - radius;
+      // --- Metadata ---
+      const metaStartY = checkY + checkSize / 2 + Math.round(12 * s);
       ctx.save();
       ctx.textBaseline = 'middle';
       ctx.font = `${metaSize}px -apple-system, system-ui, sans-serif`;
@@ -164,10 +160,10 @@ export function addWatermark(imageDataUrl, dateStr, subject = 'â€”', period = 'â
         const item = metaItems[i];
         const y = metaStartY + i * lineH;
         ctx.textAlign = 'right';
-        ctx.fillStyle = 'rgba(255,255,255,0.45)';
+        ctx.fillStyle = mutedClr;
         ctx.fillText(item.label, Math.round(-8 * s), y + lineH / 2);
         ctx.textAlign = 'left';
-        ctx.fillStyle = 'rgba(255,255,255,0.90)';
+        ctx.fillStyle = textClr;
         ctx.fillText(item.value, Math.round(8 * s), y + lineH / 2);
       }
       ctx.restore();
@@ -179,33 +175,12 @@ export function addWatermark(imageDataUrl, dateStr, subject = 'â€”', period = 'â
   });
 }
 
-function drawStar(ctx, x, y, size) {
-  const spikes = 5;
-  const outerR = size / 2;
-  const innerR = outerR * 0.4;
-  const step = Math.PI / spikes;
-  ctx.save();
-  ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  ctx.beginPath();
-  for (let i = 0; i < spikes * 2; i++) {
-    const r = i % 2 === 0 ? outerR : innerR;
-    const angle = i * step - Math.PI / 2;
-    const px = x + Math.cos(angle) * r;
-    const py = y + Math.sin(angle) * r;
-    if (i === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
-  }
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
-}
-
-function drawCheckCircleStamp(ctx, size, s) {
+function drawCheckCircleStamp(ctx, size, s, accentClr, strongClr) {
   const r = size / 2;
   const lw = Math.max(1.5, Math.round(1.8 * s));
   ctx.save();
-  ctx.strokeStyle = 'rgba(255,255,255,0.80)';
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.strokeStyle = strongClr || 'rgba(91, 141, 255, 0.75)';
+  ctx.fillStyle = 'rgba(91, 141, 255, 0.10)';
   ctx.lineWidth = lw;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';

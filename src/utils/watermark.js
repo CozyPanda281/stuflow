@@ -68,7 +68,7 @@ export function addWatermark(imageDataUrl, dateStr, subject = 'â€”', period = 'â
 
       // ATTENDED header
       ctx.textAlign = 'left';
-      ctx.font = `900 ${headerSz}px Lato, 'Segoe UI', system-ui, sans-serif`;
+      ctx.font = `900 ${headerSz}px 'Cinzel Decorative', serif`;
       ctx.fillStyle = '#22c55e';
       ctx.fillText('ATTENDED', contentX, y + headerSz / 2);
       y += headerSz + Math.round(rowH * 0.4);
@@ -94,11 +94,11 @@ export function addWatermark(imageDataUrl, dateStr, subject = 'â€”', period = 'â
 
       for (const [l, v] of detail) {
         ctx.textAlign = 'left';
-        ctx.font = `400 ${detailSz}px Lato, 'Segoe UI', system-ui, sans-serif`;
+        ctx.font = `400 ${detailSz}px Quintessential, 'Segoe UI', cursive`;
         ctx.fillStyle = 'rgba(34, 197, 94, 0.50)';
         ctx.fillText(l, contentX, y + detailSz / 2);
 
-        ctx.font = `700 ${detailSz}px Lato, 'Segoe UI', system-ui, sans-serif`;
+        ctx.font = `400 ${detailSz}px Limelight, 'Segoe UI', sans-serif`;
         ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
         ctx.fillText(v, contentX + labelW, y + detailSz / 2);
 

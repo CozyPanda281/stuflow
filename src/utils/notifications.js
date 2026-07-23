@@ -45,7 +45,7 @@ export async function checkUpcomingClasses() {
         const todayFormatted = format(new Date(), 'EEEE, MMM d');
         showNotification(
           `${period.subject} at ${period.startTime}`,
-          `${todayFormatted} · Period ${period.period} · ${period.faculty} · Room ${period.classroom}`
+          `${todayFormatted} · Period ${period.period} · ${period.faculty}`
         );
         lastNotified[`class_${period.period}`] = true;
       }

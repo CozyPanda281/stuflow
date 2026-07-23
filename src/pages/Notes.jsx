@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import db from '../db/database';
 import { format } from 'date-fns';
-import { useToast } from '../App';
+import { useToast } from '../context';
 import { MemoIcon, SearchIcon } from '../components/Icons';
 
 function subjectColor(subject) {

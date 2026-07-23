@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, parseISO, isSameDay, isBefore, startOfDay } from 'date-fns';
 import db, { getScheduleForDate } from '../db/database';
-import { useToast } from '../App';
+import { useToast } from '../context';
 import { CheckIcon } from '../components/Icons';
 
 export default function Calendar() {
@@ -13,7 +13,6 @@ export default function Calendar() {
   const [attModal, setAttModal] = useState(null);
   const [attStatus, setAttStatus] = useState('present');
   const [attNote, setAttNote] = useState('');
-  const fileRef = useRef();
   const { showToast } = useToast();
 
   const monthStart = startOfMonth(currentMonth);
@@ -128,7 +127,6 @@ export default function Calendar() {
             const color = getDayColor(dateStr);
             const today = isSameDay(day, new Date());
             const selected = selectedDate && isSameDay(day, selectedDate);
-            const todayStyle = today && !selected ? { borderColor: 'var(--accent)', borderWidth:2 } : {};
             return (
               <div key={dateStr} onClick={() => openDay(day)}
                 style={{

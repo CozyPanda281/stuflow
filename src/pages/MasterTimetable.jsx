@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import db, { defaultTimetable, saveTimetableDay } from '../db/database';
-import { useToast } from '../App';
+import { useToast } from '../context';
 import Loading from '../components/Loading';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];

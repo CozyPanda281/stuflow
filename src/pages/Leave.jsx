@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
 import db, { getActiveLeave } from '../db/database';
-import { useToast } from '../App';
+import { useToast } from '../context';
 import { WarningIcon, CalendarIcon } from '../components/Icons';
 
 const iw = { width: 18, height: 18, stroke: 'currentColor', flexShrink: 0 };

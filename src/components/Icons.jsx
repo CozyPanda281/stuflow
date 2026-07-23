@@ -1,10 +1,6 @@
 function useStroke(color) {
   return { stroke: color || 'currentColor', strokeWidth: 1.75, strokeLinecap: 'round', strokeLinejoin: 'round', fill: 'none' };
 }
-function useFill(fill) {
-  return { fill };
-}
-
 export function DashboardIcon({ color, ...props }) {
   const s = useStroke(color);
   return (
@@ -307,7 +303,7 @@ export function CheckSquareIcon({ color, ...props }) {
   );
 }
 
-export function PriorityDot({ color, ...props }) {
+export function PriorityDot({ color }) {
   const s = useStroke(color);
   return <circle cx="6" cy="6" r="3" fill="currentColor" stroke="none" {...s} />;
 }

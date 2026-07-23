@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
 import db, { getOrCreateDaySchedule } from '../db/database';
-import { useToast } from '../App';
+import { useToast } from '../context';
 import { ClipboardIcon } from '../components/Icons';
 import { addWatermark, saveImageToGallery } from '../utils/watermark';
 import AnimatedCounter from '../components/AnimatedCounter';
@@ -18,7 +18,7 @@ export default function Attendance() {
   const { showToast } = useToast();
   const today = format(new Date(), 'yyyy-MM-dd');
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function load() {
     const all = await db.attendance.orderBy('date').reverse().toArray();

@@ -41,7 +41,7 @@ export default function Dashboard() {
       checkAndFinalizeDay();
     }, 10000);
     return () => clearInterval(timer);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function loadDashboard() {
     const schedule = await getOrCreateDaySchedule(today);

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { getOrCreateDaySchedule, markDayAsHoliday } from '../db/database';
 import db from '../db/database';
-import { useToast } from '../App';
+import { useToast } from '../context';
 import { PlusIcon } from '../components/Icons';
 import Loading from '../components/Loading';
 
@@ -19,7 +19,7 @@ export default function LiveDayEditor() {
   const { showToast } = useToast();
   const today = format(new Date(), 'yyyy-MM-dd');
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function load() {
     const s = await getOrCreateDaySchedule(today);

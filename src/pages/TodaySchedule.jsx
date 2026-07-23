@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { getOrCreateDaySchedule, getActiveLeave } from '../db/database';
-import { useToast } from '../App';
 import { WarningIcon, MoonIcon } from '../components/Icons';
 import Loading from '../components/Loading';
 
@@ -13,13 +12,12 @@ export default function TodaySchedule() {
   const [loading, setLoading] = useState(true);
   const [activeLeave, setActiveLeave] = useState(null);
   const navigate = useNavigate();
-  const { showToast } = useToast();
   const today = format(new Date(), 'yyyy-MM-dd');
   const dayName = format(new Date(), 'EEEE');
 
   useEffect(() => {
     load();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function load() {
     setLoading(true);

@@ -1,4 +1,4 @@
-import { format, parseISO, isToday, isTomorrow, differenceInDays, isPast, startOfDay } from 'date-fns';
+import { format, parseISO, differenceInDays, startOfDay } from 'date-fns';
 import db, { getOrCreateDaySchedule, getActiveLeave } from '../db/database';
 
 let notificationInterval = null;
@@ -18,7 +18,7 @@ export function showNotification(title, body) {
   if (Notification.permission !== 'granted') return;
   try {
     new Notification(title, { body, icon: '/icon-192.png' });
-  } catch (e) {}
+  } catch {}
 }
 
 export async function checkUpcomingClasses() {
@@ -31,7 +31,6 @@ export async function checkUpcomingClasses() {
     if (!schedule?.actual) return;
 
     const now = new Date();
-    const currentTime = format(now, 'HH:mm');
 
     for (const period of schedule.actual) {
       if (!period.subject || period.status === 'cancelled') continue;
@@ -50,7 +49,7 @@ export async function checkUpcomingClasses() {
         lastNotified[`class_${period.period}`] = true;
       }
     }
-  } catch (e) {}
+  } catch {}
 }
 
 export async function checkUpcomingTasks() {
@@ -80,9 +79,9 @@ export async function checkUpcomingTasks() {
           showNotification('Due Tomorrow: ' + task.title, task.priority ? `Priority: ${task.priority}` : '');
           lastTaskNotified[task.id] = true;
         }
-      } catch (e) {}
+      } catch {}
     }
-  } catch (e) {}
+  } catch {}
 }
 
 export function startNotificationService() {

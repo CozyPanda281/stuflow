@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useEffect, createContext, useContext, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import MasterTimetable from './pages/MasterTimetable';
@@ -15,12 +15,7 @@ import More from './pages/More';
 import SplashScreen from './components/SplashScreen';
 import { getActiveLeave } from './db/database';
 import { startNotificationService, stopNotificationService } from './utils/notifications';
-
-export const ToastContext = createContext();
-
-export function useToast() {
-  return useContext(ToastContext);
-}
+import { ToastContext } from './context';
 
 function ToastContainer({ toasts }) {
   return (

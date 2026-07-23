@@ -30,141 +30,57 @@ export function addWatermark(imageDataUrl, dateStr, subject = 'â€”', period = 'â
       const timeValue = format(new Date(), 'hh:mm a');
       const periodValue = typeof period === 'number' ? ordinal(period) : period;
 
-      const metaItems = [
-        { label: 'Date', value: dateValue },
-        { label: 'Time', value: timeValue },
-        { label: 'Subject', value: subject },
-        { label: 'Period', value: periodValue },
-      ];
-
-      const blue = 'rgba(91, 141, 255, 0.55)';
-      const darkBlue = 'rgba(91, 141, 255, 0.75)';
-      const textClr = 'rgba(255,255,255,0.92)';
-      const mutedClr = 'rgba(255,255,255,0.50)';
-      const borderClr = 'rgba(91, 141, 255, 0.40)';
-
-      const titleSize = Math.round(17 * s);
-      const metaSize = Math.round(10 * s);
-      const checkSize = Math.round(34 * s);
-      const lineH = Math.round(metaSize * 1.7);
-      const lw = Math.max(2, Math.round(2.2 * s));
-      const innerPad = Math.round(20 * s);
+      const green = 'rgba(34, 197, 94, 0.78)';
+      const greenMuted = 'rgba(34, 197, 94, 0.48)';
+      const greenDark = 'rgba(22, 163, 74, 0.88)';
+      const labelSize = Math.round(9 * s);
+      const valSize = Math.round(10 * s);
+      const heroSize = Math.round(23 * s);
+      const orbitR = radius * 0.56;
 
       ctx.save();
       ctx.translate(cx, cy);
+      ctx.rotate(-2.5 * Math.PI / 180);
 
-      // --- Shadow ---
+      // --- Shadow on hero text only (subtle stamp impression) ---
       ctx.save();
-      ctx.shadowColor = 'rgba(0,0,0,0.30)';
-      ctx.shadowBlur = Math.round(14 * s);
-      ctx.shadowOffsetX = Math.round(2 * s);
-      ctx.shadowOffsetY = Math.round(3 * s);
-      ctx.beginPath();
-      ctx.arc(0, 0, radius, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0,0,0,0.01)';
-      ctx.fill();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = `800 italic ${heroSize}px 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif`;
+      ctx.shadowColor = 'rgba(0,0,0,0.12)';
+      ctx.shadowBlur = Math.round(4 * s);
+      ctx.shadowOffsetX = Math.round(1 * s);
+      ctx.shadowOffsetY = Math.round(2 * s);
+      ctx.fillStyle = greenDark;
+      ctx.fillText('attended', Math.round(1 * s), Math.round(1 * s));
+      ctx.fillStyle = green;
+      ctx.shadowColor = 'transparent';
+      ctx.fillText('attended', 0, 0);
       ctx.restore();
 
-      // --- Frosted glass fill with blue tint ---
-      const bx = Math.round(cx - radius);
-      const by = Math.round(cy - radius);
-      const bsize = Math.round(size);
-      const region = ctx.getImageData(bx, by, bsize, bsize);
-      const blurred = boxBlur(ctx, region, Math.round(10 * s));
-      ctx.putImageData(blurred, bx, by);
+      // --- Metadata in circular layout (no circles drawn) ---
+      const items = [
+        { label: 'Date', value: dateValue, angle: -Math.PI / 2 },
+        { label: 'Time', value: timeValue, angle: 0 },
+        { label: 'Subject', value: subject, angle: Math.PI / 2 },
+        { label: 'Period', value: periodValue, angle: Math.PI },
+      ];
 
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(0, 0, radius, 0, Math.PI * 2);
-      const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
-      grad.addColorStop(0, 'rgba(91, 141, 255, 0.08)');
-      grad.addColorStop(0.7, 'rgba(91, 141, 255, 0.12)');
-      grad.addColorStop(1, 'rgba(167, 139, 250, 0.18)');
-      ctx.fillStyle = grad;
-      ctx.fill();
-      ctx.restore();
-
-      // --- Outer border ring ---
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(0, 0, radius - 1, 0, Math.PI * 2);
-      ctx.strokeStyle = borderClr;
-      ctx.lineWidth = lw;
-      ctx.stroke();
-      ctx.restore();
-
-      // --- Inner border ring ---
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(0, 0, radius - lw - Math.round(5 * s), 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(91, 141, 255, 0.20)';
-      ctx.lineWidth = Math.max(0.5, Math.round(0.8 * s));
-      ctx.stroke();
-      ctx.restore();
-
-      // --- Dot ring ---
-      const dotR = Math.max(1.2, Math.round(1.2 * s));
-      const dotCount = 28;
-      const dotCircleR = radius - lw - Math.round(3 * s);
-      ctx.save();
-      ctx.fillStyle = 'rgba(91, 141, 255, 0.25)';
-      for (let i = 0; i < dotCount; i++) {
-        const angle = (i / dotCount) * Math.PI * 2;
-        ctx.beginPath();
-        ctx.arc(Math.cos(angle) * dotCircleR, Math.sin(angle) * dotCircleR, dotR, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
-
-      // --- Header ---
-      const headerY = -radius + innerPad + Math.round(10 * s);
       ctx.save();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      ctx.font = `800 ${titleSize}px -apple-system, system-ui, sans-serif`;
-      ctx.fillStyle = textClr;
-      ctx.fillText('CERTIFIED', 0, headerY);
+      for (const item of items) {
+        const x = Math.cos(item.angle) * orbitR;
+        const y = Math.sin(item.angle) * orbitR;
 
-      ctx.font = `600 ${Math.round(9 * s)}px -apple-system, system-ui, sans-serif`;
-      ctx.fillStyle = mutedClr;
-      ctx.fillText('ATTENDANCE PROOF', 0, headerY + Math.round(16 * s));
+        ctx.font = `500 ${labelSize}px system-ui, sans-serif`;
+        ctx.fillStyle = greenMuted;
+        ctx.fillText(item.label, x, y - Math.round(8 * s));
 
-      ctx.restore();
-
-      // --- Divider ---
-      const divY = headerY + Math.round(26 * s);
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(-Math.round(55 * s), divY);
-      ctx.lineTo(Math.round(55 * s), divY);
-      ctx.strokeStyle = 'rgba(91, 141, 255, 0.20)';
-      ctx.lineWidth = Math.max(0.5, Math.round(0.8 * s));
-      ctx.stroke();
-      ctx.restore();
-
-      // --- Checkmark ---
-      const checkY = divY + Math.round(10 * s) + checkSize / 2;
-      ctx.save();
-      ctx.translate(0, checkY);
-      drawCheckCircleStamp(ctx, checkSize, s, blue, darkBlue);
-      ctx.restore();
-
-      // --- Metadata ---
-      const metaStartY = checkY + checkSize / 2 + Math.round(12 * s);
-      ctx.save();
-      ctx.textBaseline = 'middle';
-      ctx.font = `${metaSize}px -apple-system, system-ui, sans-serif`;
-
-      for (let i = 0; i < metaItems.length; i++) {
-        const item = metaItems[i];
-        const y = metaStartY + i * lineH;
-        ctx.textAlign = 'right';
-        ctx.fillStyle = mutedClr;
-        ctx.fillText(item.label, Math.round(-8 * s), y + lineH / 2);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = textClr;
-        ctx.fillText(item.value, Math.round(8 * s), y + lineH / 2);
+        ctx.font = `600 ${valSize}px system-ui, sans-serif`;
+        ctx.fillStyle = greenDark;
+        ctx.fillText(item.value, x, y + Math.round(8 * s));
       }
       ctx.restore();
 
@@ -173,76 +89,6 @@ export function addWatermark(imageDataUrl, dateStr, subject = 'â€”', period = 'â
     };
     img.src = imageDataUrl;
   });
-}
-
-function drawCheckCircleStamp(ctx, size, s, accentClr, strongClr) {
-  const r = size / 2;
-  const lw = Math.max(1.5, Math.round(1.8 * s));
-  ctx.save();
-  ctx.strokeStyle = strongClr || 'rgba(91, 141, 255, 0.75)';
-  ctx.fillStyle = 'rgba(91, 141, 255, 0.10)';
-  ctx.lineWidth = lw;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-
-  ctx.beginPath();
-  ctx.arc(0, 0, r, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(-r * 0.28, r * 0.05);
-  ctx.lineTo(-r * 0.07, r * 0.25);
-  ctx.lineTo(r * 0.35, -r * 0.18);
-  ctx.stroke();
-
-  ctx.restore();
-}
-
-function boxBlur(ctx, imageData, radius) {
-  const w = imageData.width, h = imageData.height;
-  const r = Math.max(1, Math.min(Math.floor(radius), 8));
-  const src = new Uint8ClampedArray(imageData.data);
-  const tmp = new Uint8ClampedArray(src);
-  const out = new Uint8ClampedArray(src);
-
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      let rSum = 0, gSum = 0, bSum = 0, count = 0;
-      for (let dx = -r; dx <= r; dx++) {
-        const nx = x + dx;
-        if (nx >= 0 && nx < w) {
-          const idx = (y * w + nx) * 4;
-          rSum += src[idx]; gSum += src[idx + 1]; bSum += src[idx + 2];
-          count++;
-        }
-      }
-      const idx = (y * w + x) * 4;
-      tmp[idx] = rSum / count; tmp[idx + 1] = gSum / count;
-      tmp[idx + 2] = bSum / count; tmp[idx + 3] = src[idx + 3];
-    }
-  }
-
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      let rSum = 0, gSum = 0, bSum = 0, count = 0;
-      for (let dy = -r; dy <= r; dy++) {
-        const ny = y + dy;
-        if (ny >= 0 && ny < h) {
-          const idx = (ny * w + x) * 4;
-          rSum += tmp[idx]; gSum += tmp[idx + 1]; bSum += tmp[idx + 2];
-          count++;
-        }
-      }
-      const idx = (y * w + x) * 4;
-      out[idx] = rSum / count; out[idx + 1] = gSum / count;
-      out[idx + 2] = bSum / count;
-    }
-  }
-
-  const result = ctx.createImageData(w, h);
-  result.data.set(out);
-  return result;
 }
 
 export async function saveImageToGallery(dataUrl, subject = 'attendance', dateStr = '') {

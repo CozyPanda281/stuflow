@@ -24,35 +24,83 @@ export function addWatermark(imageDataUrl, dateStr, subject = 'â€”', period = 'â
       const periodValue = typeof period === 'number' ? ordinal(period) : period;
 
       const pad = Math.round(w * 0.04);
-      const rowH = Math.round(Math.min(w, h) * 0.035);
-      const headerSz = Math.round(rowH * 1.5);
-      const lineSz = Math.round(rowH * 0.75);
-      let y = h - pad - rowH * 5;
+      const labelW = Math.round(w * 0.13);
+      const rowH = Math.round(Math.min(w, h) * 0.034);
+      const headerSz = Math.round(rowH * 1.55);
+      const detailSz = Math.round(rowH * 0.8);
+      const innerPad = Math.round(rowH * 0.8);
+      const panelW = labelW + Math.round(w * 0.18) + innerPad * 2;
+      const rows = 5;
+      const panelH = headerSz + rows * rowH + innerPad * 2;
+      const panelX = w - pad - panelW;
+      const panelY = h - pad - panelH;
+      const r = Math.round(rowH * 0.5);
+
+      // --- Panel background ---
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(panelX + r, panelY);
+      ctx.lineTo(panelX + panelW - r, panelY);
+      ctx.quadraticCurveTo(panelX + panelW, panelY, panelX + panelW, panelY + r);
+      ctx.lineTo(panelX + panelW, panelY + panelH - r);
+      ctx.quadraticCurveTo(panelX + panelW, panelY + panelH, panelX + panelW - r, panelY + panelH);
+      ctx.lineTo(panelX + r, panelY + panelH);
+      ctx.quadraticCurveTo(panelX, panelY + panelH, panelX, panelY + panelH - r);
+      ctx.lineTo(panelX, panelY + r);
+      ctx.quadraticCurveTo(panelX, panelY, panelX + r, panelY);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.60)';
+      ctx.fill();
+      ctx.restore();
+
+      // --- Green accent bar ---
+      ctx.save();
+      ctx.fillStyle = '#22c55e';
+      ctx.fillRect(panelX + Math.round(rowH * 0.3), panelY + Math.round(rowH * 0.4), Math.round(rowH * 0.2), panelH - Math.round(rowH * 0.8));
+      ctx.restore();
+
+      // --- Content ---
+      const contentX = panelX + innerPad + Math.round(rowH * 0.5);
+      let y = panelY + innerPad;
 
       ctx.save();
       ctx.textBaseline = 'middle';
-      ctx.textAlign = 'right';
 
-      ctx.font = `800 ${headerSz}px system-ui, sans-serif`;
-      ctx.fillStyle = 'rgba(34, 197, 94, 0.85)';
-      ctx.fillText('ATTENDED', w - pad, y);
-      y += rowH;
+      // ATTENDED header
+      ctx.textAlign = 'left';
+      ctx.font = `700 ${headerSz}px 'Segoe UI', system-ui, sans-serif`;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText('ATTENDED', contentX, y + headerSz / 2);
+      y += headerSz + Math.round(rowH * 0.4);
 
-      const label = [
+      // Divider
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(contentX, y);
+      ctx.lineTo(panelX + panelW - innerPad, y);
+      ctx.stroke();
+      ctx.restore();
+      y += Math.round(rowH * 0.6);
+
+      // Detail rows
+      const detail = [
         ['Date', dateValue],
         ['Time', timeValue],
         ['Subject', subject],
         ['Period', periodValue],
       ];
 
-      for (const [l, v] of label) {
-        ctx.font = `600 ${lineSz}px system-ui, sans-serif`;
-        ctx.fillStyle = 'rgba(34, 197, 94, 0.50)';
-        ctx.fillText(l, w - pad - Math.round(w * 0.15), y);
+      for (const [l, v] of detail) {
+        ctx.textAlign = 'left';
+        ctx.font = `500 ${detailSz}px 'Segoe UI', system-ui, sans-serif`;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.50)';
+        ctx.fillText(l, contentX, y + detailSz / 2);
 
-        ctx.font = `700 ${lineSz}px system-ui, sans-serif`;
-        ctx.fillStyle = 'rgba(22, 163, 74, 0.90)';
-        ctx.fillText(v, w - pad, y);
+        ctx.font = `600 ${detailSz}px 'Segoe UI', system-ui, sans-serif`;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(v, contentX + labelW, y + detailSz / 2);
 
         y += rowH;
       }

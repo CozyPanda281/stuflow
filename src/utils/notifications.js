@@ -41,10 +41,11 @@ export async function checkUpcomingClasses() {
       const diffMs = classTime.getTime() - now.getTime();
       const diffMin = Math.round(diffMs / 60000);
 
-      if (diffMin > 0 && diffMin <= 5) {
+      if (diffMin > 0 && diffMin <= 10) {
+        const todayFormatted = format(new Date(), 'EEEE, MMM d');
         showNotification(
-          `${period.subject} in ${diffMin} min`,
-          `${period.faculty} · Room ${period.classroom} · Period ${period.period}`
+          `${period.subject} at ${period.startTime}`,
+          `${todayFormatted} · Period ${period.period} · ${period.faculty} · Room ${period.classroom}`
         );
         lastNotified[`class_${period.period}`] = true;
       }

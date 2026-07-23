@@ -39,7 +39,7 @@ export default function Dashboard() {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
       checkAndFinalizeDay();
-    }, 10000);
+    }, 5000);
     return () => clearInterval(timer);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

@@ -13,11 +13,12 @@ export async function requestPermission() {
   return result === 'granted';
 }
 
-export function showNotification(title, body) {
+export async function showNotification(title, body) {
   if (!('Notification' in window)) return;
   if (Notification.permission !== 'granted') return;
   try {
-    new Notification(title, { body, icon: '/icon-192.png' });
+    const reg = await navigator.serviceWorker.ready;
+    reg.showNotification(title, { body, icon: '/icon-192.png', vibrate: [200, 100, 200] });
   } catch {}
 }
 

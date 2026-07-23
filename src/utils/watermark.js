@@ -18,9 +18,8 @@ export function addWatermark(imageDataUrl, dateStr, subject = 'â€”', period = 'â
       canvas.height = h;
       ctx.drawImage(img, 0, 0, w, h);
 
-      const size = Math.round(Math.min(w, h) * 0.30);
-      const radius = size / 2;
-      const margin = Math.max(14, Math.round(w * 0.03));
+      const size = Math.round(Math.min(w, h) * 0.32);
+      const margin = Math.max(16, Math.round(w * 0.03));
       const cx = w - size / 2 - margin;
       const cy = h - size / 2 - margin;
       const s = size / 300;
@@ -30,59 +29,80 @@ export function addWatermark(imageDataUrl, dateStr, subject = 'â€”', period = 'â
       const timeValue = format(new Date(), 'hh:mm a');
       const periodValue = typeof period === 'number' ? ordinal(period) : period;
 
-      const green = 'rgba(34, 197, 94, 0.78)';
-      const greenMuted = 'rgba(34, 197, 94, 0.48)';
-      const greenDark = 'rgba(22, 163, 74, 0.88)';
-      const labelSize = Math.round(9 * s);
-      const valSize = Math.round(10 * s);
-      const heroSize = Math.round(23 * s);
-      const orbitR = radius * 0.56;
+      const heroSize = Math.round(32 * s);
+      const metaLabelSz = Math.round(10 * s);
+      const metaValSz = Math.round(11 * s);
 
       ctx.save();
       ctx.translate(cx, cy);
-      ctx.rotate(-2.5 * Math.PI / 180);
+      ctx.rotate(-2 * Math.PI / 180);
 
-      // --- Shadow on hero text only (subtle stamp impression) ---
+      // --- Hero: ATTENDED ---
       ctx.save();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.font = `800 italic ${heroSize}px 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif`;
-      ctx.shadowColor = 'rgba(0,0,0,0.12)';
-      ctx.shadowBlur = Math.round(4 * s);
-      ctx.shadowOffsetX = Math.round(1 * s);
+      ctx.font = `900 italic ${heroSize}px Georgia, 'Times New Roman', serif`;
+
+      const grad = ctx.createLinearGradient(0, -heroSize * 0.5, 0, heroSize * 0.5);
+      grad.addColorStop(0, '#4ade80');
+      grad.addColorStop(0.45, '#22c55e');
+      grad.addColorStop(1, '#15803d');
+
+      ctx.shadowColor = 'rgba(0,0,0,0.15)';
+      ctx.shadowBlur = Math.round(5 * s);
+      ctx.shadowOffsetX = Math.round(2 * s);
       ctx.shadowOffsetY = Math.round(2 * s);
-      ctx.fillStyle = greenDark;
-      ctx.fillText('attended', Math.round(1 * s), Math.round(1 * s));
-      ctx.fillStyle = green;
-      ctx.shadowColor = 'transparent';
-      ctx.fillText('attended', 0, 0);
+      ctx.fillStyle = grad;
+      ctx.fillText('ATTENDED', 0, -Math.round(4 * s));
       ctx.restore();
 
-      // --- Metadata in circular layout (no circles drawn) ---
-      const items = [
-        { label: 'Date', value: dateValue, angle: -Math.PI / 2 },
-        { label: 'Time', value: timeValue, angle: 0 },
-        { label: 'Subject', value: subject, angle: Math.PI / 2 },
-        { label: 'Period', value: periodValue, angle: Math.PI },
-      ];
-
+      // --- Top row: DATE / TIME ---
       ctx.save();
-      ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
+      ctx.textAlign = 'center';
+      ctx.font = `700 ${metaLabelSz}px Georgia, 'Times New Roman', serif`;
+      ctx.fillStyle = 'rgba(34, 197, 94, 0.50)';
 
-      for (const item of items) {
-        const x = Math.cos(item.angle) * orbitR;
-        const y = Math.sin(item.angle) * orbitR;
+      const topY = -Math.round(82 * s);
+      ctx.fillText('D A T E', -Math.round(70 * s), topY);
+      ctx.fillText('T I M E', Math.round(70 * s), topY);
 
-        ctx.font = `500 ${labelSize}px system-ui, sans-serif`;
-        ctx.fillStyle = greenMuted;
-        ctx.fillText(item.label, x, y - Math.round(8 * s));
-
-        ctx.font = `600 ${valSize}px system-ui, sans-serif`;
-        ctx.fillStyle = greenDark;
-        ctx.fillText(item.value, x, y + Math.round(8 * s));
-      }
+      ctx.font = `700 ${metaValSz}px Georgia, 'Times New Roman', serif`;
+      ctx.fillStyle = 'rgba(22, 163, 74, 0.88)';
+      const topValY = topY + Math.round(16 * s);
+      ctx.fillText(dateValue, -Math.round(70 * s), topValY);
+      ctx.fillText(timeValue, Math.round(70 * s), topValY);
       ctx.restore();
+
+      // --- Bottom row: SUBJECT / PERIOD ---
+      ctx.save();
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'center';
+      ctx.font = `700 ${metaLabelSz}px Georgia, 'Times New Roman', serif`;
+      ctx.fillStyle = 'rgba(34, 197, 94, 0.50)';
+
+      const botY = Math.round(82 * s);
+      ctx.fillText('S U B J E C T', -Math.round(70 * s), botY);
+      ctx.fillText('P E R I O D', Math.round(70 * s), botY);
+
+      ctx.font = `700 ${metaValSz}px Georgia, 'Times New Roman', serif`;
+      ctx.fillStyle = 'rgba(22, 163, 74, 0.88)';
+      const botValY = botY + Math.round(16 * s);
+      ctx.fillText(subject, -Math.round(70 * s), botValY);
+      ctx.fillText(periodValue, Math.round(70 * s), botValY);
+      ctx.restore();
+
+      // --- Ink stamp texture noise ---
+      const absX = Math.round(cx - size / 2);
+      const absY = Math.round(cy - size / 2);
+      const stampData = ctx.getImageData(absX, absY, Math.round(size), Math.round(size));
+      for (let i = 3; i < stampData.data.length; i += 4) {
+        if (stampData.data[i] > 0) {
+          const noise = 0.82 + Math.random() * 0.36;
+          stampData.data[i] = Math.round(Math.min(255, stampData.data[i] * noise));
+        }
+      }
+      ctx.putImageData(stampData, absX, absY);
 
       ctx.restore();
       resolve(canvas.toDataURL('image/jpeg', 0.88));

@@ -31,23 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Limelight&family=Quintessential&display=swap" rel="stylesheet" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
     <title>Aditya</title>
-    <script>
-      (function(){
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.getRegistrations().then(function(r){
-            for (var i=0;i<r.length;i++) r[i].unregister();
-            if (r.length>0 && !sessionStorage.getItem('swk')) {
-              sessionStorage.setItem('swk','1');
-              window.location.reload();
-            }
-          });
-        }
-        if (window.caches) {
-          caches.keys().then(function(n){ for (var i=0;i<n.length;i++) caches.delete(n[i]); });
-        }
-      })();
-    </script>
   </head>
   <body>
     <div class="pre-splash" id="pre-splash">

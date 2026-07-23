@@ -42,8 +42,7 @@ export async function checkUpcomingClasses() {
       const diffMs = classTime.getTime() - now.getTime();
       const diffMin = Math.round(diffMs / 60000);
 
-      lastNotified = {};
-      if (diffMin > 0 && diffMin <= 99999) {
+      if (diffMin > 0 && diffMin <= 10) {
         const todayFormatted = format(new Date(), 'EEEE, MMM d');
         showNotification(
           `${period.subject} at ${period.startTime}`,
@@ -88,15 +87,12 @@ export async function checkUpcomingTasks() {
 }
 
 export async function startNotificationService() {
-  const granted = await requestPermission();
+  await requestPermission();
   if (notificationInterval) clearInterval(notificationInterval);
   notificationInterval = setInterval(() => {
     checkUpcomingClasses();
     checkUpcomingTasks();
-  }, 5000);
-  if (granted) {
-    showNotification('Aditya', 'Notifications active ✓');
-  }
+  }, 30000);
   checkUpcomingClasses();
   checkUpcomingTasks();
 }

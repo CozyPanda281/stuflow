@@ -86,13 +86,16 @@ export async function checkUpcomingTasks() {
   } catch {}
 }
 
-export function startNotificationService() {
-  requestPermission();
+export async function startNotificationService() {
+  const granted = await requestPermission();
   if (notificationInterval) clearInterval(notificationInterval);
   notificationInterval = setInterval(() => {
     checkUpcomingClasses();
     checkUpcomingTasks();
-  }, 30000);
+  }, 5000);
+  if (granted) {
+    showNotification('Aditya', 'Notifications active ✓');
+  }
   checkUpcomingClasses();
   checkUpcomingTasks();
 }

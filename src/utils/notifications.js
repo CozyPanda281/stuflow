@@ -32,24 +32,25 @@ export async function checkUpcomingClasses() {
     if (!schedule?.actual) return;
 
     const now = new Date();
+    const nowTime = now.getHours() * 60 + now.getMinutes();
 
-    for (const period of schedule.actual) {
-      if (!period.subject || period.status === 'cancelled') continue;
-      if (lastNotified[`class_${period.period}`]) continue;
+    const upcoming = schedule.actual
+      .filter(p => p.subject && p.status !== 'cancelled')
+      .map(p => {
+        const [h, m] = p.startTime.split(':').map(Number);
+        const classMin = h * 60 + m;
+        return { ...p, diffMin: classMin - nowTime };
+      })
+      .filter(p => p.diffMin > 0)
+      .sort((a, b) => a.diffMin - b.diffMin)[0];
 
-      const [h, m] = period.startTime.split(':').map(Number);
-      const classTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
-      const diffMs = classTime.getTime() - now.getTime();
-      const diffMin = Math.round(diffMs / 60000);
-
-      if (diffMin > 0 && diffMin <= 10) {
-        const todayFormatted = format(new Date(), 'EEEE, MMM d');
-        showNotification(
-          `${period.subject} at ${period.startTime}`,
-          `${todayFormatted} · Period ${period.period} · ${period.faculty}`
-        );
-        lastNotified[`class_${period.period}`] = true;
-      }
+    if (upcoming && upcoming.diffMin <= 10 && !lastNotified[`class_${upcoming.period}`]) {
+      const todayFormatted = format(new Date(), 'EEEE, MMM d');
+      showNotification(
+        `${upcoming.subject} at ${upcoming.startTime}`,
+        `${todayFormatted} · Period ${upcoming.period} · ${upcoming.faculty}`
+      );
+      lastNotified[`class_${upcoming.period}`] = true;
     }
   } catch {}
 }
